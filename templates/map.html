@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dssssshaka Route Finder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css">
+
+<style>
+html,body{height:100%}
+body{margin:0;font-family:Arial;overflow:hidden}
+.app{display:flex;width:100vw;height:100vh;overflow:hidden}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+    flex:0 0 30%;
+    width:30%;
+    min-width:320px;
+    height:100vh;
+    box-sizing:border-box;
+    overflow-y:auto;
+    padding:20px;background:#fff;
+    box-shadow:4px 0 12px rgba(0,0,0,.15);
+    z-index:1000;
+    position:relative;
+}
+#map{
+    flex:1 1 auto;
+    min-width:0;
+    height:100vh;
+}
+
+.sidebar h3{text-align:center;color:#1a73e8}
+.sidebar-inner{
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+}
+.sidebar-main{
+    flex:1 0 auto;
+}
+.gd-app-link{
+    margin-top:20px;
+    text-decoration:none;
+    display:block;
+    width:100%;
+}
+.gd-app-wrap{
+    width:100%;
+    text-align:center;
+    padding-bottom:8px;
+}
+
+.input-box{position:relative}
+.sidebar input{
+    width:90%;padding:12px;margin-bottom:10px;
+    border-radius:8px;border:1px solid #ddd
+}
+
+.suggestions{
+    position:absolute;top:46px;left:0;right:0;
+    background:#fff;border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);
+    display:none;z-index:2000
+}
+.suggestions div{padding:10px;cursor:pointer}
+.suggestions div:hover{background:#f1f3f4}
+
+button{
+    width:100%;padding:12px;
+    background:#1a73e8;color:white;
+    border:none;border-radius:8px;
+    font-size:16px;font-weight:bold;
+    cursor:pointer;
+}
+
+/* Tabs */
+.tab-btn{background:#fff;color:#1a73e8;border:1px solid #e6eefc;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+.tab-btn.tab-active{background:#1a73e8;color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ===== DANGER TOAST ===== */
+.toast{
+    position:fixed;
+    left:-400px;
+    top:410px;
+    width:257px;
+    background:#b71c1c;
+    color:#fff;
+    padding:18px;
+    border-radius:12px 0px 0px 12px;
+    box-shadow:-4px 6px 20px rgba(0,0,0,.3);
+    z-index:3000;
+    transition:1s ease;
+}
+.toast h4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    gap: 6px;
+}
+.toast p.centered {
+    text-align: center;
+    margin: 0px 0px;
+}
+.toast.show{left:1230px}
+
+/* ===== DANGER LEGEND ===== */
+.legend{
+    margin-top:245px;
+    padding:12px;
+    border-radius:10px;
+    background:#d1cbcb;
+    text-align:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+.legend h4{
+    margin:0 0 8px;
+    font-size:14px;
+    color:#333;
+}
+
+.grad-bar{
+    height:16px;
+    border-radius:10px;
+    background: linear-gradient(to right,
+        #fff176,   /* 5 */
+        #fdd835,   /* 6 */
+        #454064,   /* 7 */
+        #060075,   /* 8 */
+        #A30000,   /* 9 */
+        #000000    /* 10 */
+    );
+}
+
+.grad-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    margin-top:4px;
+    color:#333;
+}
+
+.sos-panel{
+    display:none;
+    padding:12px;
+    border:1px solid #d7e4ff;
+    border-radius:12px;
+    background:#f7faff;
+}
+.sos-panel.active{display:block}
+.sos-panel label{
+    display:block;
+    margin:0 0 6px 0;
+    font-size:14px;
+    font-weight:700;
+    color:#1a3d7c;
+}
+.sos-panel input{
+    width:100%;
+    box-sizing:border-box;
+    margin-bottom:12px;
+}
+.sos-help{
+    margin:4px 0 10px 0;
+    font-size:12px;
+    color:#5f6368;
+}
+.sos-panel textarea{
+    width:100%;
+    min-height:96px;
+    box-sizing:border-box;
+    margin-bottom:12px;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    resize:vertical;
+    font-family:Arial, sans-serif;
+}
+.sos-status{
+    margin:2px 0 10px 0;
+    font-size:13px;
+    color:#0f9d58;
+    min-height:18px;
+}
+.sos-actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.sos-test-btn{
+    background:#0f9d58;
+}
+.sos-alert{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:5000;
+    padding:20px;
+}
+.sos-alert.active{display:flex}
+.sos-alert-card{
+    width:min(420px, 100%);
+    background:#fff;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 12px 32px rgba(0,0,0,.25);
+    text-align:center;
+}
+.sos-alert-card h3{
+    margin:0 0 12px 0;
+    color:#c62828;
+    font-size:24px;
+}
+.sos-alert-card p{
+    margin:0 0 10px 0;
+    color:#222;
+    line-height:1.5;
+}
+.sos-alert-card .sos-instruction{
+    font-size:13px;
+    color:#5f6368;
+}
+.sos-alert-card button{
+    margin-top:8px;
+    background:#0f9d58;
+}
+.sos-alert-card button:disabled{
+    background:#9aa0a6;
+    cursor:not-allowed;
+    opacity:.75;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== WARNING TOAST ===== -->
+<div id="dangerToast" class="toast">
+    <h4> <span></span> 🔔 Crime Zone Alert</h4>
+    <p class="centered">Your selected route passes through</p>
+    <p class="centered"> risk crime hotspot.</p>
+    <br>
+    <p class="centered"><b>Please stay alert 🚨 or consider</b></p>
+    <p class="centered"><b>🔀 alternative routes.</b></p>
+</div>
+
+<div id="sosAlertModal" class="sos-alert">
+    <div class="sos-alert-card">
+        <h3>SOS Alert</h3>
+        <p id="sosAlertText">Are you stuck in one place for a long time? Are you safe?</p>
+        <p id="sosAlertCountdown" class="sos-instruction"></p>
+        <p class="sos-instruction">Type your 4 digit PIN from the keyboard. No input box will be shown.</p>
+        <button id="sosSafeBtn" type="button" disabled>Yes ! I am</button>
+    </div>
+</div>
+
+<div class="app">
+
+<div class="sidebar">
+    <div class="sidebar-inner">
+    <div class="sidebar-main">
+    <h3>Dhaka Route Finder</h3>
+
+    <div class="tabs" style="display:flex;gap:8px;margin:12px 0 18px 0">
+        <button class="tab-btn tab-active" data-target="tab-route">Route</button>
+        <button class="tab-btn" data-target="tab-thana">Thana Info</button>
+    </div>
+
+    <div id="tab-route" class="tab-content" style="display:block">
+        <div class="input-box">
+            <input id="start" placeholder="Start location (Dhaka)">
+            <div id="startSug" class="suggestions"></div>
+        </div>
+
+        <div class="input-box">
+            <input id="end" placeholder="Destination (Dhaka)">
+            <div id="endSug" class="suggestions"></div>
+        </div>
+
+        <label>Date</label>
+        <input type="date" id="crimeDate">
+
+        <label>Time</label>
+        <input type="time" id="crimeTime">
+
+        <button onclick="findRoute()">Find Route</button>
+        <div id="nearestThanas" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <div id="tab-thana" class="tab-content" style="display:none">
+        <h4 style="margin-top:0">Thana List</h4>
+        <div style="margin-bottom:10px;position:relative">
+            <input id="thanaSearch" placeholder="Search Thana..." style="width:90%;padding:15px;border-radius:8px;border:1px solid #ddd;" />
+            <div id="thanaSug" class="suggestions" style="top:48px;bottom:auto;display:none;max-height:200px;overflow:auto"></div>
+        </div>
+        <div id="thanaList" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow:auto;padding-right:6px"></div>
+    </div>
+
+    </div>
+
+    <!-- ===== Play Store button ===== -->
+    <div class="gd-app-wrap">
+        <a class="gd-app-link" href="https://play.google.com/store/apps/details?id=com.opus_bd.lostandfound" target="_blank" rel="noopener noreferrer">
+            <button style="display:flex;align-items:center;gap:12px;justify-content:center;width:100%;padding:14px 18px;background:#0f9d58;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:18px;">
+                <img src="/static/online_gd_logo.png" alt="Online GD" style="height:44px;width:44px;object-fit:contain;border-radius:6px;background:#fff;padding:4px;"/>
+                <span>Open Online GD App</span>
+            </button>
+        </a>
+    </div>
+</div>
+</div>
+
+<div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+<script>
+/* ================= MAP INIT ================= */
+const map = L.map('map',{
+    maxBounds:[[23.65,90.30],[23.90,90.55]],
+    minZoom:11
+}).setView([23.8103,90.4125],13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+// explicit element references (avoid relying on browser global id variables)
+const start = document.getElementById('start');
+const end = document.getElementById('end');
+const startSug = document.getElementById('startSug');
+const endSug = document.getElementById('endSug');
+const crimeDate = document.getElementById('crimeDate');
+const crimeTime = document.getElementById('crimeTime');
+
+// Tabs and Thana list setup
+document.addEventListener('DOMContentLoaded', ()=>{
+    // tab behaviour
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('tab-active'));
+            btn.classList.add('tab-active');
+            const target = btn.dataset.target;
+            document.querySelectorAll('.tab-content').forEach(tc=>{ tc.style.display = (tc.id===target)? 'block':'none'; });
+        });
+    });
+
+    // populate Thana list with clickable items
+    const listEl = document.getElementById('thanaList');
+    if(listEl && window.policeStations){
+        listEl.innerHTML = '';
+        window.policeStations.forEach((s, idx)=>{
+            const el = document.createElement('div');
+            el.style.display='flex';
+            el.style.justifyContent='space-between';
+            el.style.alignItems='center';
+            el.style.padding='8px';
+            el.style.border='1px solid #eee';
+            el.style.borderRadius='8px';
+            el.style.cursor='pointer';
+            el.innerHTML = `<div style="font-weight:600">${s.name}</div><div style="font-size:12px;color:#666">View</div>`;
+            el.onclick = () => {
+                map.setView([s.lat, s.lng], 15, { animate: true });
+                L.popup()
+                    .setLatLng([s.lat, s.lng])
+                    .setContent(
+                        `<b>${s.name}</b><br>Phone: ${s.phone || 'N/A'}<br>Email: ${s.email || 'N/A'}`
+                    )
+                    .openOn(map);
+
+                // Add police icon outside the popup box
+                const policeIcon = L.divIcon({
+                    html: `<div style="text-align:left; margin-top: 10px;"><span style="font-size: 34px;">👮</span></div>`
+                });
+                L.marker([s.lat, s.lng], { icon: policeIcon }).addTo(map);
+            };
+            listEl.appendChild(el);
+        });
+    }
+
+    // thana search + suggestions
+    const thanaSearch = document.getElementById('thanaSearch');
+    const thanaSug = document.getElementById('thanaSug');
+    function updateThanaSuggestions(q){
+        if(!q || q.trim().length===0){ thanaSug.style.display='none'; return; }
+        const ql = q.toLowerCase();
+        const matches = window.policeStations.filter(s=> s.name.toLowerCase().includes(ql));
+
+        // Move the exact match to the top of the list
+        const exactMatchIndex = matches.findIndex(s => s.name.toLowerCase() === ql);
+        if (exactMatchIndex !== -1) {
+            const [exactMatch] = matches.splice(exactMatchIndex, 1);
+            matches.unshift(exactMatch);
+        }
+
+        thanaSug.innerHTML = '';
+        matches.slice(0, 8).forEach(s => {
+            const div = document.createElement('div');
+            div.innerText = s.name;
+            div.style.padding = '8px';
+            div.style.cursor = 'pointer';
+            div.onclick = () => {
+                thanaSearch.value = s.name;
+                thanaSug.style.display = 'none';
+                map.setView([s.lat, s.lng], 15, { animate: true });
+                L.popup()
+                    .setLatLng([s.lat, s.lng])
+                    .setContent(
+                        `<b>${s.name}</b><br>Phone: ${s.phone || 'N/A'}<br>Email: ${s.email || 'N/A'}`
+                    )
+                    .openOn(map);
+
+                // Add police icon outside the popup box
+                const policeIcon = L.divIcon({
+                    html: `<div style="text-align:center; margin-top: 10px;"><span style="font-size: 24px;">👮</span></div>`
+                });
+                L.marker([s.lat, s.lng], { icon: policeIcon }).addTo(map);
+            };
+            thanaSug.appendChild(div);
+        });
+        thanaSug.style.display = matches.length ? 'block' : 'none';
+    }
+
+    if(thanaSearch){
+        thanaSearch.addEventListener('input', debounce(()=>updateThanaSuggestions(thanaSearch.value), 180));
+        thanaSearch.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Enter') {
+                const q = thanaSearch.value.toLowerCase();
+                const index = window.policeStations.findIndex(s => s.name.toLowerCase() === q);
+                if (index !== -1) {
+                    const [selected] = window.policeStations.splice(index, 1);
+                    window.policeStations.unshift(selected);
+                    updateThanaSuggestions(thanaSearch.value);
+                }
+            }
+        });
+        // hide suggestions on outside click
+        document.addEventListener('click', (ev)=>{
+            if(!thanaSug.contains(ev.target) && ev.target !== thanaSearch) thanaSug.style.display='none';
+        });
+    }
+});
+
+/* ================= HOTSPOTS ================= */
+window.hotspots = [];
+
+function loadHotspots(){
+    let d = crimeDate.value;
+    let t = crimeTime.value;
+
+    fetch(`/get_hotspots?date=${d}&time=${t}`)
+    .then(r=>r.json())
+    .then(data=>{
+        if(window.hotspotLayer) map.removeLayer(window.hotspotLayer);
+        window.hotspotLayer = L.layerGroup().addTo(map);
+
+        window.hotspots = data;
+
+        function getColor(weight){
+            if(weight >= 10) return "#000000";   // dark red
+            if(weight == 9)  return "#A30000";   // light red
+            if(weight == 8)  return "#060075";   // orange
+            if(weight == 7)  return "#454064";   // light orange
+            if(weight == 6)  return "#fdd835";   // yellow
+            if(weight == 5)  return "#fff176";   // light yellow
+            return "#90caf9";                   // default blue
+        }
+
+        data.forEach(h=>{
+            let clr = getColor(h.weight);
+
+            L.circle([h.lat,h.lng],{
+                radius:200,
+                color: clr,
+                fillColor: clr,
+                fillOpacity:0.9,
+            }).addTo(window.hotspotLayer)
+            .bindPopup(`
+<b>Crime:</b> ${h.crime}<br>
+<b>Risk:</b> ${h.weight}/10<br>
+<b>Time:</b> ${h.time_range}
+`);
+        });
+    });
+}
+
+crimeDate.onchange = loadHotspots;
+crimeTime.onchange = loadHotspots;
+
+/* ================= SEARCH ================= */
+function debounce(fn,delay=300){
+    let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),delay)}
+}
+
+async function setStartAsMyLocation(){
+    if(!navigator.geolocation){
+        alert('Location is not supported in this browser.');
+        return;
+    }
+
+    try{
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            });
+        });
+
+        start.value = 'My Location';
+        startSug.dataset.lat = position.coords.latitude;
+        startSug.dataset.lng = position.coords.longitude;
+        startSug.style.display = "none";
+    }catch(error){
+        alert('Unable to get your current location.');
+    }
+}
+
+function prependMyLocationOption(box){
+    if(box !== startSug) return;
+
+    const myLocationOption = document.createElement("div");
+    myLocationOption.innerText = "My Location";
+    myLocationOption.style.fontWeight = "700";
+    myLocationOption.onclick = () => {
+        setStartAsMyLocation();
+    };
+    box.appendChild(myLocationOption);
+}
+
+async function searchPlace(q,box){
+    if(q.length<2){
+        if(box === startSug){
+            box.innerHTML = "";
+            prependMyLocationOption(box);
+            box.style.display = "block";
+        }else{
+            box.style.display="none";
+        }
+        return;
+    }
+    const r = await fetch(`https://photon.komoot.io/api/?q=${q}&lat=23.81&lon=90.41&limit=6`);
+    const d = await r.json();
+    box.innerHTML="";
+    prependMyLocationOption(box);
+    d.features.forEach(p=>{
+        let div=document.createElement("div");
+        div.innerText=(p.properties.name||"")+" "+(p.properties.city||"Dhaka");
+        div.onclick=()=>{
+            box.previousElementSibling.value=div.innerText;
+            box.dataset.lat=p.geometry.coordinates[1];
+            box.dataset.lng=p.geometry.coordinates[0];
+            box.style.display="none";
+        }
+        box.appendChild(div);
+    });
+    box.style.display="block";
+}
+
+start.oninput = debounce(()=>{
+    delete startSug.dataset.lat;
+    delete startSug.dataset.lng;
+    searchPlace(start.value,startSug);
+});
+end.oninput   = debounce(()=>{
+    delete endSug.dataset.lat;
+    delete endSug.dataset.lng;
+    searchPlace(end.value,endSug);
+});
+start.addEventListener('focus', ()=>searchPlace(start.value,startSug));
+start.addEventListener('click', ()=>searchPlace(start.value,startSug));
+
+document.addEventListener('click', (ev)=>{
+    if(!startSug.contains(ev.target) && ev.target !== start) startSug.style.display='none';
+    if(!endSug.contains(ev.target) && ev.target !== end) endSug.style.display='none';
+});
+
+document.addEventListener('keydown', (ev)=>{
+    handleAlertPinEntry(ev.key);
+});
+
+/* ================= ROUTE ================= */
+let routeCtrl, mA, mB;
+let safetyModeEnabled = false;
+let liveLocationMarker = null;
+let liveLocationAccuracyCircle = null;
+let liveLocationWatchId = null;
+let safetyPanelOpen = false;
+let safetySettings = { minutes: 0, countdownMinutes: 0, pin: '' };
+let stationaryAnchor = null;
+let stationarySince = null;
+let safetyAlertActive = false;
+let alertPinBuffer = '';
+let alertSoundInterval = null;
+let alertCountdownInterval = null;
+let alertCountdownRemaining = 0;
+let rescueEmailSent = false;
+// police stations sample list (replace with real data or API as needed)
+window.policeStations = [
+    {name: "Kotwali Thana", lat: 23.707703986257986, lng: 90.40946942982121, phone: "0123456789", email: "kotwali@police.gov.bd"},
+    {name: "Ramna Thana", lat: 23.7410, lng: 90.4040, phone: "0123456789", email: "ramna@police.gov.bd"},
+    {name: "Gulshan Thana", lat: 23.7920, lng: 90.4120, phone: "0123456789", email: "gulshan@police.gov.bd"},
+    {name: "Mirpur Thana", lat: 23.8280, lng: 90.3570, phone: "0123456789", email: "mirpur@police.gov.bd"},
+    {name: "Badda Thana", lat: 23.7800, lng: 90.4250, phone: "0123456789", email: "badda@police.gov.bd"},
+    {name: "Dhanmondi Thana", lat: 23.7460, lng: 90.3740, phone: "0123456789", email: "dhanmondi@police.gov.bd"},
+    {name: "Mohammadpur Thana", lat: 23.7590, lng: 90.3660, phone: "0123456789", email: "mohammadpur@police.gov.bd"},
+    {name: "Motijheel Thana", lat: 23.7280, lng: 90.4110, phone: "0123456789", email: "motijheel@police.gov.bd"},
+    {name: "Paltan Thana", lat: 23.7350, lng: 90.4150, phone: "0123456789", email: "paltan@police.gov.bd"},
+    {name: "Tejgaon Thana", lat: 23.7680, lng: 90.4050, phone: "0123456789", email: "tejgaon@police.gov.bd"},
+    {name: "Keraniganj Thana", lat: 23.6960, lng: 90.3650, phone: "0123456789", email: "keraniganj@police.gov.bd"},
+    {name: "Kamrangirchar Thana", lat: 23.7290, lng: 90.4200, phone: "0123456789", email: "kamrangirchar@police.gov.bd"},
+    {name: "Hazaribagh Thana", lat: 23.7340, lng: 90.4040, phone: "0123456789", email: "hazaribagh@police.gov.bd"},
+    {name: "Shahbagh Thana", lat: 23.7360, lng: 90.3930, phone: "0123456789", email: "shahbagh@police.gov.bd"},
+    {name: "Lalbagh Thana", lat: 23.7160, lng: 90.3990, phone:"", email: "lalbagh@police.gov.bd"},
+    {name: "Khilgaon Thana", lat: 23.7420, lng: 90.4440, phone: "0123456789", email: "khilgaon@police.gov.bd"},
+    {name: "Khilkhet Thana", lat: 23.8680, lng: 90.4220, phone: "0123456789", email: "khilkhet@police.gov.bd"},
+    {name: "Uttara Thana", lat: 23.8750, lng: 90.3980, phone: "0123456789", email: "uttara@police.gov.bd"},
+    {name: "Airport Thana", lat: 23.8478, lng: 90.4106, phone: "0123456789", email: "airport@police.gov.bd"},
+    {name: "Malibagh Thana", lat: 23.7500, lng: 90.4180, phone: "0123456789", email: "malibagh@police.gov.bd"},
+    {name: "Kafrul Thana", lat: 23.8140, lng: 90.3550, phone:"0123456789", email:"kafrul@police.gov.bd"},
+    {name: "Shyampur Thana", lat: 23.7020, lng: 90.3980, phone:"0123456789", email:"shyampur@police.gov.bd"}
+];
+let stationLayer;
+
+function makeIcon(t){
+    return L.divIcon({
+        html:`<div style="
+        background:#1a73e8;color:#fff;
+        width:36px;height:36px;
+        border-radius:50%;
+        display:flex;align-items:center;
+        justify-content:center;
+        font-weight:bold">${t}</div>`,
+        className:""
+    });
+}
+
+function updateSafetyButtonState(){
+    const safetyBtn = document.getElementById('safetyModeBtn');
+    if(!safetyBtn) return;
+
+    safetyBtn.innerText = 'safty Mood';
+    safetyBtn.style.background = safetyModeEnabled ? '#0f9d58' : '#1a73e8';
+}
+
+function updateSafetyPanelState(){
+    const panel = document.getElementById('sosPanel');
+    if(panel) panel.classList.toggle('active', safetyPanelOpen);
+}
+
+function updateSafetyStatus(message, color = '#0f9d58'){
+    const status = document.getElementById('sosStatus');
+    if(!status) return;
+    status.innerText = message || '';
+    status.style.color = color;
+}
+
+function updateSosActionButton(){
+    const actionBtn = document.getElementById('sosActionBtn');
+    if(!actionBtn) return;
+    actionBtn.innerText = safetyModeEnabled ? 'Stop SOS Monitoring' : 'Start SOS Monitoring';
+    actionBtn.style.background = safetyModeEnabled ? '#d93025' : '#1a73e8';
+}
+
+function resetStationaryTracking(position = null){
+    if(position){
+        stationaryAnchor = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        stationarySince = Date.now();
+    }else{
+        stationaryAnchor = null;
+        stationarySince = null;
+    }
+}
+
+function stopAlertSound(){
+    if(alertSoundInterval){
+        clearInterval(alertSoundInterval);
+        alertSoundInterval = null;
+    }
+}
+
+function stopAlertCountdown(){
+    if(alertCountdownInterval){
+        clearInterval(alertCountdownInterval);
+        alertCountdownInterval = null;
+    }
+}
+
+function updateAlertCountdownText(){
+    const countdownEl = document.getElementById('sosAlertCountdown');
+    if(!countdownEl) return;
+    countdownEl.innerText = alertCountdownRemaining > 0
+        ? `Notification countdown: ${alertCountdownRemaining} minute(s) left.`
+        : '';
+}
+
+async function sendRescueEmail(){
+    const myEmail = (document.getElementById('sosMyEmail')?.value || '').trim();
+    const toEmail = (document.getElementById('sosToEmail')?.value || '').trim();
+    const body = (document.getElementById('sosBody')?.value || '').trim();
+
+    if(!myEmail || !toEmail || !body){
+        updateSafetyStatus('Rescue email could not be sent because email fields are incomplete.', '#d93025');
+        return;
+    }
+
+    let location = {};
+    if(liveLocationMarker){
+        const latLng = liveLocationMarker.getLatLng();
+        location = { lat: latLng.lat, lng: latLng.lng };
+    }
+
+    try{
+        const response = await fetch('/send_sos_email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                my_email: myEmail,
+                to_email: toEmail,
+                body,
+                stationary_minutes: safetySettings.minutes,
+                countdown_minutes: safetySettings.countdownMinutes,
+                location
+            })
+        });
+        const data = await response.json();
+        if(!response.ok || !data.ok){
+            throw new Error(data.error || 'Failed to send rescue email.');
+        }
+        updateSafetyStatus('Rescue email sent successfully.', '#d93025');
+    }catch(error){
+        updateSafetyStatus(error.message || 'Failed to send rescue email.', '#d93025');
+    }
+}
+
+async function sendTestRescueEmail(){
+    const settings = validateSafetySettings();
+    if(!settings) return;
+
+    safetySettings = settings;
+    updateSafetyStatus('Sending test rescue email...');
+    await sendRescueEmail();
+}
+
+function startAlertCountdown(){
+    stopAlertCountdown();
+    alertCountdownRemaining = safetySettings.countdownMinutes;
+    rescueEmailSent = false;
+    updateAlertCountdownText();
+
+    alertCountdownInterval = setInterval(async () => {
+        alertCountdownRemaining -= 1;
+        updateAlertCountdownText();
+
+        if(alertCountdownRemaining <= 0){
+            stopAlertCountdown();
+            if(!rescueEmailSent){
+                rescueEmailSent = true;
+                await sendRescueEmail();
+            }
+        }
+    }, 60000);
+}
+
+function playAlertBeep(){
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.42);
+    oscillator.onended = () => ctx.close();
+}
+
+function startAlertSound(){
+    stopAlertSound();
+    playAlertBeep();
+    alertSoundInterval = setInterval(playAlertBeep, 1400);
+}
+
+function triggerSosAlert(){
+    if(safetyAlertActive) return;
+
+    safetyAlertActive = true;
+    alertPinBuffer = '';
+    const safeBtn = document.getElementById('sosSafeBtn');
+    if(safeBtn) safeBtn.disabled = true;
+    const alertText = document.getElementById('sosAlertText');
+    const minutesText = `${safetySettings.minutes} minute${safetySettings.minutes > 1 ? 's' : ''}`;
+    if(alertText){
+        alertText.innerText = `Are you stuck in one place for a long time (${minutesText})? Are you safe?`;
+    }
+
+    const modal = document.getElementById('sosAlertModal');
+    if(modal) modal.classList.add('active');
+    startAlertSound();
+    startAlertCountdown();
+}
+
+function dismissSosAlert(){
+    if(!safetyAlertActive && !alertSoundInterval) return;
+    safetyAlertActive = false;
+    alertPinBuffer = '';
+    stopAlertSound();
+    stopAlertCountdown();
+    alertCountdownRemaining = 0;
+    updateAlertCountdownText();
+    const safeBtn = document.getElementById('sosSafeBtn');
+    if(safeBtn) safeBtn.disabled = true;
+    const modal = document.getElementById('sosAlertModal');
+    if(modal) modal.classList.remove('active');
+    updateSafetyStatus('Safety check confirmed.');
+}
+
+function handleAlertPinEntry(key){
+    if(!safetyAlertActive) return;
+
+    if(key === 'Backspace'){
+        alertPinBuffer = alertPinBuffer.slice(0, -1);
+        return;
+    }
+
+    if(!/^\d$/.test(key)) return;
+
+    alertPinBuffer = (alertPinBuffer + key).slice(-4);
+    if(alertPinBuffer === safetySettings.pin){
+        const safeBtn = document.getElementById('sosSafeBtn');
+        if(safeBtn){
+            safeBtn.disabled = false;
+            safeBtn.click();
+        }
+    }
+}
+
+function validateSafetySettings(){
+    const timeInput = document.getElementById('sosAlertMinutes');
+    const countdownInput = document.getElementById('sosNotificationMinutes');
+    const pinInput = document.getElementById('sosPin');
+    const myEmailInput = document.getElementById('sosMyEmail');
+    const toEmailInput = document.getElementById('sosToEmail');
+    const bodyInput = document.getElementById('sosBody');
+    const minutes = Number(timeInput?.value);
+    const countdownMinutes = Number(countdownInput?.value);
+    const pin = (pinInput?.value || '').trim();
+    const myEmail = (myEmailInput?.value || '').trim();
+    const toEmail = (toEmailInput?.value || '').trim();
+    const body = (bodyInput?.value || '').trim();
+
+    if(!minutes || minutes <= 0){
+        updateSafetyStatus('Alert notification time after must be at least 1 minute.', '#d93025');
+        return null;
+    }
+
+    if(!countdownMinutes || countdownMinutes <= 0){
+        updateSafetyStatus('Notification during time must be at least 1 minute.', '#d93025');
+        return null;
+    }
+
+    if(!/^\d{4}$/.test(pin)){
+        updateSafetyStatus('Please set a valid 4 digit PIN.', '#d93025');
+        return null;
+    }
+
+    if(!myEmail || !toEmail || !body){
+        updateSafetyStatus('Please fill My email, To Mail and text body.', '#d93025');
+        return null;
+    }
+
+    return { minutes, countdownMinutes, pin, myEmail, toEmail, body };
+}
+
+function clearLiveLocationLayers(){
+    if(liveLocationMarker){
+        map.removeLayer(liveLocationMarker);
+        liveLocationMarker = null;
+    }
+    if(liveLocationAccuracyCircle){
+        map.removeLayer(liveLocationAccuracyCircle);
+        liveLocationAccuracyCircle = null;
+    }
+}
+
+function stopSafetyMode(){
+    safetyModeEnabled = false;
+    updateSafetyButtonState();
+    updateSosActionButton();
+
+    if(liveLocationWatchId !== null){
+        navigator.geolocation.clearWatch(liveLocationWatchId);
+        liveLocationWatchId = null;
+    }
+
+    resetStationaryTracking();
+    clearLiveLocationLayers();
+    dismissSosAlert();
+    updateSafetyStatus('SOS monitoring stopped.', '#5f6368');
+}
+
+function handleLiveLocation(position){
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = position.coords.accuracy || 0;
+    const currentLatLng = [lat, lng];
+
+    if(!liveLocationMarker){
+        const liveIcon = L.divIcon({
+            html: `
+                <div style="display:flex;align-items:center;justify-content:center;">
+                    <div style="width:18px;height:18px;border-radius:50%;background:#0f9d58;border:3px solid #ffffff;box-shadow:0 0 0 4px rgba(15,157,88,0.25);"></div>
+                </div>
+            `,
+            className: "",
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+        liveLocationMarker = L.marker(currentLatLng, {icon: liveIcon}).addTo(map);
+    }else{
+        liveLocationMarker.setLatLng(currentLatLng);
+    }
+
+    liveLocationMarker.bindPopup('Your live location').openPopup();
+
+    if(!liveLocationAccuracyCircle){
+        liveLocationAccuracyCircle = L.circle(currentLatLng, {
+            radius: accuracy,
+            color: '#0f9d58',
+            fillColor: '#0f9d58',
+            fillOpacity: 0.12,
+            weight: 1
+        }).addTo(map);
+    }else{
+        liveLocationAccuracyCircle.setLatLng(currentLatLng);
+        liveLocationAccuracyCircle.setRadius(accuracy);
+    }
+
+    map.setView(currentLatLng, Math.max(map.getZoom(), 15), {animate: true});
+
+    if(safetyModeEnabled && safetySettings.minutes > 0){
+        if(!stationaryAnchor){
+            resetStationaryTracking(position);
+            return;
+        }
+
+        const distanceFromAnchor = map.distance(
+            [stationaryAnchor.lat, stationaryAnchor.lng],
+            currentLatLng
+        );
+
+        if(distanceFromAnchor > 50){
+            resetStationaryTracking(position);
+            if(safetyAlertActive) dismissSosAlert();
+            updateSafetyStatus('Movement detected. SOS timer reset.');
+            return;
+        }
+
+        const elapsed = Date.now() - stationarySince;
+        const thresholdMs = safetySettings.minutes * 60 * 1000;
+        const remainingMs = Math.max(0, thresholdMs - elapsed);
+
+        if(elapsed >= thresholdMs){
+            updateSafetyStatus('Safety check required now.', '#d93025');
+            triggerSosAlert();
+        }else{
+            updateSafetyStatus(`Same place monitor is on. Alert in ${Math.ceil(remainingMs / 1000)} sec if you stay within 50m.`);
+        }
+    }
+}
+
+function startSafetyMode(){
+    if(!navigator.geolocation){
+        safetyModeEnabled = false;
+        updateSafetyButtonState();
+        updateSosActionButton();
+        alert('Live location is not supported in this browser.');
+        return;
+    }
+
+    if(liveLocationWatchId !== null){
+        navigator.geolocation.clearWatch(liveLocationWatchId);
+        liveLocationWatchId = null;
+    }
+
+    liveLocationWatchId = navigator.geolocation.watchPosition(
+        (position) => {
+            handleLiveLocation(position);
+        },
+        () => {
+            alert('Live location access denied or unavailable.');
+            stopSafetyMode();
+        },
+        {
+            enableHighAccuracy: true,
+            maximumAge: 5000,
+            timeout: 10000
+        }
+    );
+
+    updateSafetyStatus(`SOS monitoring started for ${safetySettings.minutes} minute${safetySettings.minutes > 1 ? 's' : ''} with a ${safetySettings.countdownMinutes} minute countdown.`);
+}
+
+const sosSafeBtn = document.getElementById('sosSafeBtn');
+if(sosSafeBtn){
+    sosSafeBtn.addEventListener('click', () => {
+        dismissSosAlert();
+        if(liveLocationMarker){
+            const latLng = liveLocationMarker.getLatLng();
+            resetStationaryTracking({ coords: { latitude: latLng.lat, longitude: latLng.lng } });
+        }else{
+            resetStationaryTracking();
+        }
+    });
+}
+
+function findRoute(){
+    if(!startSug.dataset.lat||!endSug.dataset.lat){
+        alert("Select from suggestions");
+        return;
+    }
+
+    stopSafetyMode();
+
+    let s=L.latLng(startSug.dataset.lat,startSug.dataset.lng);
+    let e=L.latLng(endSug.dataset.lat,endSug.dataset.lng);
+
+    if(routeCtrl) map.removeControl(routeCtrl);
+    if(mA) map.removeLayer(mA);
+    if(mB) map.removeLayer(mB);
+
+    mA=L.marker(s,{icon:makeIcon("A")}).addTo(map);
+    mB=L.marker(e,{icon:makeIcon("B")}).addTo(map);
+
+    routeCtrl=L.Routing.control({
+        waypoints:[s,e],
+        showAlternatives:true,
+        alternatives:2,
+        addWaypoints:false,
+        draggableWaypoints:false,
+        createMarker:()=>null
+    }).addTo(map);
+
+    // clean previous alt UI
+    if(window.altRouteLayer){ map.removeLayer(window.altRouteLayer); window.altRouteLayer = null; }
+
+    routeCtrl.on('routesfound',e=>{
+        window.currentRoutes = e.routes; // store globally for alt-button access
+        const routes = e.routes; // primary + alternatives
+        const primary = routes[0];
+        const primaryCoords = primary.coordinates;
+
+        // always show primary (Routing control handles drawing it)
+        const touches = routeTouchesHotspot(primaryCoords);
+        if(touches) showDangerToast();
+        showNearestStations(primaryCoords);
+
+        // find a safe alternative among provided alternatives
+        window.currentSafeAlt = null;
+        for(let i=1;i<routes.length;i++){
+            if(!routeTouchesHotspot(routes[i].coordinates)){
+                window.currentSafeAlt = routes[i];
+                break;
+            }
+        }
+
+        // if no safe alternative provided by router, try to compute one by adding small detours
+        async function tryComputeSafeAlternate(){
+            if(window.currentSafeAlt) return window.currentSafeAlt;
+            try{
+                const router = L.Routing.osrmv1();
+                const primaryPoints = primaryCoords;
+                // sample points along route
+                const step = Math.max(5, Math.floor(primaryPoints.length/10));
+                const offsets = [0.005,-0.005,0.007,-0.007,0,0.006,-0.006];
+
+                for(let i=step;i<primaryPoints.length-step;i+=step){
+                    const p = primaryPoints[i];
+                    for(const off of offsets){
+                        const detour = L.latLng(p.lat + off, p.lng);
+                        // route via detour using the original start/end `s` and `e`
+                        const waypoints = [s, detour, e];
+                        const result = await new Promise((res,rej)=>{
+                            router.route(waypoints, (err, routes)=>{ if(err) return res(null); res(routes && routes.length? routes[0] : null); });
+                        });
+                        if(result && !routeTouchesHotspot(result.coordinates)){
+                            return result;
+                        }
+                    }
+                    for(const off of offsets){
+                        const detour = L.latLng(p.lat, p.lng + off);
+                        const waypoints = [s, detour, e];
+                        const result = await new Promise((res,rej)=>{
+                            router.route(waypoints, (err, routes)=>{ if(err) return res(null); res(routes && routes.length? routes[0] : null); });
+                        });
+                        if(result && !routeTouchesHotspot(result.coordinates)){
+                            return result;
+                        }
+                    }
+                }
+            }catch(e){/* ignore errors */}
+            return null;
+        }
+
+        const container = document.getElementById('nearestThanas');
+        // alternative route UI removed per user request
+    });
+
+    map.fitBounds(L.featureGroup([mA,mB]).getBounds().pad(0.3));
+}
+
+/* ================= HOTSPOT CHECK ================= */
+function showDangerToast(){
+    const t=document.getElementById("dangerToast");
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),40000);
+}
+
+function checkRouteHotspot(coords){
+    for(let p of coords){
+        for(let h of hotspots){
+            let d = map.distance([p.lat,p.lng],[h.lat,h.lng]);
+            if(d<=200){
+                showDangerToast();
+                return;
+            }
+        }
+    }
+}
+
+// return true if any point on the route is within 200m of a hotspot
+function routeTouchesHotspot(coords, threshold=200){
+    for(let p of coords){
+        for(let h of hotspots){
+            let d = map.distance([p.lat,p.lng],[h.lat,h.lng]);
+            if(d<=threshold) return true;
+        }
+    }
+    return false;
+}
+
+function routeHotspotScore(coords, threshold=200){
+    // lower is better: count of route points within threshold of a hotspot
+    let count = 0;
+    for(let p of coords){
+        for(let h of hotspots){
+            let d = map.distance([p.lat,p.lng],[h.lat,h.lng]);
+            if(d<=threshold){ count++; break; }
+        }
+    }
+    return count;
+}
+
+// Show the nearest N police stations to the given start LatLng (default 3)
+function makePoliceIcon(label){
+    return L.divIcon({
+        html: `
+            <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="background:#ff0000;color:#fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,.3)">👮</div>
+                <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid #1a73e8;margin-top:-4px"></div>
+            </div>
+        `,
+        className:"",
+        iconSize: [38,48],
+        iconAnchor: [19,48]
+    });
+}
+
+function showNearestStations(routeCoords, radiusMeters = 1000){
+    if(!routeCoords || !routeCoords.length) return;
+    if(stationLayer) map.removeLayer(stationLayer);
+    stationLayer = L.layerGroup().addTo(map);
+
+    // compute minimum distance from each station to any point on the route
+    const list = window.policeStations.map(s=>{
+        let minD = Infinity;
+        for(const p of routeCoords){
+            const d = map.distance([p.lat,p.lng],[s.lat,s.lng]);
+            if(d < minD) minD = d;
+        }
+        return {...s, dist: minD};
+    });
+
+    // filter stations that lie within radiusMeters of the route
+    const nearby = list.filter(s=>s.dist <= radiusMeters).sort((a,b)=>a.dist-b.dist);
+
+    // prepare storage for markers (created when toggle button clicked)
+    window.currentNearestMarkers = new Array(nearby.length).fill(null);
+
+    // render single toggle button under the Find Route button
+    const container = document.getElementById('nearestThanas');
+    container.innerHTML = '';
+
+    const safetyBtn = document.createElement('button');
+    safetyBtn.id = 'safetyModeBtn';
+    safetyBtn.style.marginBottom = '10px';
+    safetyBtn.style.padding = '10px';
+    safetyBtn.style.borderRadius = '8px';
+    safetyBtn.style.border = '1px solid #ddd';
+    safetyBtn.style.color = '#fff';
+    safetyBtn.style.fontWeight = '600';
+    safetyBtn.style.cursor = 'pointer';
+    safetyBtn.onclick = () => {
+        safetyPanelOpen = !safetyPanelOpen;
+        updateSafetyPanelState();
+    };
+
+    container.appendChild(safetyBtn);
+    updateSafetyButtonState();
+
+    const sosPanel = document.createElement('div');
+    sosPanel.id = 'sosPanel';
+    sosPanel.className = 'sos-panel';
+    sosPanel.innerHTML = `
+        <label for="sosAlertMinutes">Alert notification time after</label>
+        <input id="sosAlertMinutes" type="number" min="1" step="1" placeholder="Time in minutes">
+        <label for="sosNotificationMinutes">set the notification during time</label>
+        <input id="sosNotificationMinutes" type="number" min="1" step="1" placeholder="Countdown in minutes">
+        <label for="sosPin">Set 4 digit PIN number</label>
+        <input id="sosPin" type="password" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="4 digit PIN">
+        <label for="sosMyEmail">My email</label>
+        <input id="sosMyEmail" type="email" placeholder="your@email.com">
+        <label for="sosToEmail">To Mail</label>
+        <input id="sosToEmail" type="email" placeholder="rescue@email.com">
+        <label for="sosBody">Text body</label>
+        <textarea id="sosBody" placeholder="Write the rescue message that should be emailed."></textarea>
+        <div class="sos-help">If you stay within 50 meters longer than this time, an alert will appear with sound.</div>
+        <div id="sosStatus" class="sos-status"></div>
+        <div class="sos-actions">
+            <button id="sosActionBtn" type="button">Start SOS Monitoring</button>
+            <button id="sosTestBtn" class="sos-test-btn" type="button">Send Test Rescue Mail</button>
+        </div>
+    `;
+    container.appendChild(sosPanel);
+    updateSafetyPanelState();
+    updateSosActionButton();
+
+    const sosActionBtn = sosPanel.querySelector('#sosActionBtn');
+    sosActionBtn.onclick = () => {
+        if(safetyModeEnabled){
+            stopSafetyMode();
+            return;
+        }
+
+        const settings = validateSafetySettings();
+        if(!settings) return;
+
+        safetySettings = settings;
+        safetyModeEnabled = true;
+        resetStationaryTracking();
+        updateSafetyButtonState();
+        updateSosActionButton();
+        startSafetyMode();
+    };
+
+    const sosTestBtn = sosPanel.querySelector('#sosTestBtn');
+    sosTestBtn.onclick = async () => {
+        await sendTestRescueEmail();
+    };
+
+    const toggle = document.createElement('button');
+    toggle.style.padding = '10px';
+    toggle.style.borderRadius = '8px';
+    toggle.style.border = '1px solid #ddd';
+    toggle.style.background = '#fff';
+    toggle.style.color = '#1a73e8';
+    toggle.style.fontWeight = '600';
+    toggle.style.cursor = 'pointer';
+    toggle.innerText = `Show Nearest Thanas 👮`;
+
+    let shown = false;
+    toggle.onclick = ()=>{
+        if(!shown){
+            if(nearby.length === 0){
+                toggle.innerText = 'No thanas within 1 km';
+                return;
+            }
+
+            // create markers for all nearby thanas
+            nearby.forEach((st, idx)=>{
+                const marker = L.marker([st.lat,st.lng],{icon: makePoliceIcon(idx+1)}).addTo(stationLayer)
+                    .bindPopup(`<b>${st.name}</b><br>${(st.dist/1000).toFixed(2)} km away`);
+                window.currentNearestMarkers[idx] = marker;
+            });
+
+            // fit map to include route and the nearby markers
+            const markersGroup = nearby.map(s=>L.marker([s.lat,s.lng]));
+            const routePoints = routeCoords.map(p=>L.marker([p.lat,p.lng]));
+            const group = L.featureGroup(markersGroup.concat(routePoints));
+            map.fitBounds(group.getBounds().pad(0.3));
+
+            if(window.currentNearestMarkers[0]) window.currentNearestMarkers[0].openPopup();
+            toggle.innerText = `Hide Thanas `;
+            shown = true;
+        }else{
+            // remove markers
+            window.currentNearestMarkers.forEach(m=>{ if(m) map.removeLayer(m); });
+            window.currentNearestMarkers = new Array(nearby.length).fill(null);
+            toggle.innerText = `Show Nearest Thanas 👮`;
+            shown = false;
+        }
+    };
+
+    container.appendChild(toggle);
+}
+
+function focusNearest(idx){
+    if(!window.currentNearestMarkers || !window.currentNearestMarkers[idx]) return;
+    const m = window.currentNearestMarkers[idx];
+    map.setView(m.getLatLng(), 15, {animate:true});
+    m.openPopup();
+}
+
+function focusNearest(idx){
+    if(!window.currentNearestMarkers || !window.currentNearestMarkers[idx]) return;
+    const m = window.currentNearestMarkers[idx];
+    map.setView(m.getLatLng(), 15, {animate:true});
+    m.openPopup();
+}
+
+// Programmatic alternative trigger removed
+</script>
+
+</body>
+</html>
