@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css">
 
 <style>
 html,body{height:100%}
@@ -30,6 +29,82 @@ body{margin:0;font-family:Arial;overflow:hidden}
     flex:1 1 auto;
     min-width:0;
     height:100vh;
+    background:linear-gradient(180deg,#dfeaf7 0%,#eef5fb 100%);
+}
+.leaflet-control-layers{
+    border:none !important;
+    border-radius:14px !important;
+    box-shadow:0 10px 24px rgba(15, 23, 42, 0.16) !important;
+    overflow:hidden;
+}
+.leaflet-control-layers-toggle{
+    width:40px !important;
+    height:40px !important;
+}
+.leaflet-control-layers-expanded{
+    padding:12px 14px !important;
+    font-family:Arial, sans-serif;
+}
+.route-info-panel{
+    position:fixed;
+    top:82px;
+    right:16px;
+    width:min(360px, calc(100vw - 32px));
+    max-height:calc(100vh - 120px);
+    overflow:auto;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 16px 40px rgba(15,23,42,.22);
+    padding:18px;
+    z-index:2500;
+    display:none;
+}
+.route-info-panel.active{display:block}
+.route-info-title{
+    font-size:28px;
+    font-weight:800;
+    color:#1a1a1a;
+    margin:0 0 10px 0;
+}
+.route-info-meta{
+    font-size:16px;
+    color:#444;
+    margin:0 0 12px 0;
+}
+.route-info-badge{
+    display:inline-block;
+    margin:0 0 12px 0;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#edf7ed;
+    color:#166534;
+    font-size:13px;
+    font-weight:700;
+}
+.route-info-badge.risky{
+    background:#fff7e6;
+    color:#8a5200;
+}
+.route-step-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.route-step{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    font-size:14px;
+    color:#222;
+    line-height:1.45;
+}
+.route-step-text{
+    flex:1 1 auto;
+}
+.route-step-distance{
+    flex:0 0 auto;
+    color:#5f6368;
+    white-space:nowrap;
 }
 
 .sidebar h3{text-align:center;color:#1a73e8}
@@ -166,6 +241,24 @@ button{
     width:100%;
     box-sizing:border-box;
     margin-bottom:12px;
+}
+.sos-input-suffix{
+    position:relative;
+    margin-bottom:12px;
+}
+.sos-input-suffix input{
+    margin-bottom:0;
+    padding-right:86px;
+}
+.sos-input-suffix span{
+    position:absolute;
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#5f6368;
+    font-size:14px;
+    font-weight:600;
+    pointer-events:none;
 }
 .sos-help{
     margin:4px 0 10px 0;
@@ -321,10 +414,10 @@ button{
 </div>
 
 <div id="map"></div>
+<div id="routeInfoPanel" class="route-info-panel"></div>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
 <script>
 /* ================= MAP INIT ================= */
@@ -333,7 +426,35 @@ const map = L.map('map',{
     minZoom:11
 }).setView([23.8103,90.4125],13);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+const streetLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+});
+
+const lightLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+});
+
+const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+});
+
+streetLayer.addTo(map);
+
+L.control.layers(
+    {
+        'Street View': streetLayer,
+        'Light View': lightLayer,
+        'Dark View': darkLayer
+    },
+    null,
+    { position: 'topright' }
+).addTo(map);
 
 // explicit element references (avoid relying on browser global id variables)
 const start = document.getElementById('start');
@@ -590,7 +711,7 @@ document.addEventListener('keydown', (ev)=>{
 });
 
 /* ================= ROUTE ================= */
-let routeCtrl, mA, mB;
+let mA, mB;
 let safetyModeEnabled = false;
 let liveLocationMarker = null;
 let liveLocationAccuracyCircle = null;
@@ -631,6 +752,13 @@ window.policeStations = [
     {name: "Shyampur Thana", lat: 23.7020, lng: 90.3980, phone:"0123456789", email:"shyampur@police.gov.bd"}
 ];
 let stationLayer;
+let mainRouteLayer = null;
+let altRouteLayer = null;
+window.currentPrimaryRouteCoords = [];
+window.currentRouteOptions = [];
+window.currentRouteContext = null;
+const routeInfoPanel = document.getElementById('routeInfoPanel');
+const OSRM_ROUTE_URL = 'https://router.project-osrm.org/route/v1/driving';
 
 function makeIcon(t){
     return L.divIcon({
@@ -643,6 +771,512 @@ function makeIcon(t){
         font-weight:bold">${t}</div>`,
         className:""
     });
+}
+
+function clearAlternativeRouteLayer(){
+    if(altRouteLayer){
+        map.removeLayer(altRouteLayer);
+        altRouteLayer = null;
+    }
+}
+
+function clearRenderedRoutes(){
+    if(mainRouteLayer){
+        map.removeLayer(mainRouteLayer);
+        mainRouteLayer = null;
+    }
+    clearAlternativeRouteLayer();
+}
+
+function hideRouteInfo(){
+    routeInfoPanel.classList.remove('active');
+    routeInfoPanel.innerHTML = '';
+}
+
+function clearRouteUi(){
+    const routeChoices = document.getElementById('routeChoicesWrap');
+    if(routeChoices) routeChoices.remove();
+    const routeHelp = document.getElementById('safeAlternativeWrap');
+    if(routeHelp) routeHelp.remove();
+    hideRouteInfo();
+}
+
+function drawPrimaryRoute(route){
+    if(mainRouteLayer) map.removeLayer(mainRouteLayer);
+    mainRouteLayer = L.polyline(route.coordinates, {
+        color: '#d93025',
+        weight: 7,
+        opacity: 0.95,
+        lineCap: 'round',
+        lineJoin: 'round'
+    }).addTo(map);
+}
+
+function drawAlternativeRoute(route, color = '#0f9d58'){
+    clearAlternativeRouteLayer();
+    altRouteLayer = L.polyline(route.coordinates, {
+        color,
+        weight: 7,
+        opacity: 0.92,
+        lineCap: 'round',
+        lineJoin: 'round',
+        dashArray: '12 10'
+    }).addTo(map);
+}
+
+function fitRoute(route){
+    if(!route?.coordinates?.length) return;
+    map.fitBounds(L.latLngBounds(route.coordinates).pad(0.2));
+}
+
+function formatDistance(meters = 0){
+    if(meters >= 1000) return `${(meters / 1000).toFixed(1)} km`;
+    return `${Math.round(meters)} m`;
+}
+
+function formatDuration(seconds = 0){
+    const totalMinutes = Math.max(1, Math.round(seconds / 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if(hours && minutes) return `${hours} hr ${minutes} min`;
+    if(hours) return `${hours} hr`;
+    return `${minutes} min`;
+}
+
+function buildStepText(step){
+    const maneuver = step.maneuver || {};
+    const type = maneuver.type || 'continue';
+    const modifier = maneuver.modifier || '';
+    const roadName = step.name ? ` onto ${step.name}` : '';
+
+    if(type === 'depart') return `Start${roadName}`;
+    if(type === 'arrive') return 'Arrive at destination';
+    if(type === 'roundabout' || type === 'rotary'){
+        const exitText = maneuver.exit ? ` and take exit ${maneuver.exit}` : '';
+        return `Enter the roundabout${exitText}${roadName}`;
+    }
+    if(type === 'fork') return `Keep ${modifier || 'straight'}${roadName}`.trim();
+    if(type === 'merge') return `Merge${roadName}`;
+    if(type === 'on ramp') return `Take the ramp${roadName}`;
+    if(type === 'off ramp') return `Exit${roadName}`;
+    if(type === 'continue') return `Continue ${modifier}${roadName}`.replace(/\s+/g, ' ').trim();
+    if(type === 'turn') return `Turn ${modifier}${roadName}`.replace(/\s+/g, ' ').trim();
+    if(type === 'new name') return `Continue${roadName}`;
+    if(type === 'end of road') return `At the end of the road, turn ${modifier}${roadName}`.replace(/\s+/g, ' ').trim();
+    return `${type}${roadName}`.replace(/\s+/g, ' ').trim();
+}
+
+function normalizeRoute(routeData){
+    const coordinates = (routeData.geometry?.coordinates || []).map(([lng, lat]) => L.latLng(lat, lng));
+    const steps = (routeData.legs || []).flatMap((leg) => {
+        return (leg.steps || []).map((step) => ({
+            text: buildStepText(step),
+            distance: step.distance || 0
+        }));
+    });
+
+    return {
+        coordinates,
+        summary: {
+            totalDistance: routeData.distance || 0,
+            totalTime: routeData.duration || 0
+        },
+        steps
+    };
+}
+
+async function requestRoute(waypoints){
+    const points = waypoints
+        .filter((point) => Number.isFinite(point?.lat) && Number.isFinite(point?.lng))
+        .map((point) => `${point.lng},${point.lat}`)
+        .join(';');
+
+    if(!points) return null;
+
+    const url = `${OSRM_ROUTE_URL}/${points}?overview=full&steps=true&geometries=geojson&alternatives=false&continue_straight=true`;
+    try{
+        const response = await fetch(url);
+        if(!response.ok) return null;
+        const data = await response.json();
+        if(data.code !== 'Ok' || !data.routes?.length) return null;
+        return normalizeRoute(data.routes[0]);
+    }catch(error){
+        return null;
+    }
+}
+
+function renderRouteInfo(option){
+    if(!option?.route?.coordinates?.length){
+        hideRouteInfo();
+        return;
+    }
+
+    const badgeText = option.isHotspotFree
+        ? 'Hotspot-free route'
+        : option.score < option.primaryScore
+            ? `Hotspot score reduced to ${option.score}`
+            : `Hotspot score ${option.score}`;
+
+    const stepsHtml = (option.route.steps || []).slice(0, 12).map((step) => `
+        <div class="route-step">
+            <div class="route-step-text">${step.text}</div>
+            <div class="route-step-distance">${formatDistance(step.distance)}</div>
+        </div>
+    `).join('');
+
+    routeInfoPanel.innerHTML = `
+        <div class="route-info-title">${option.label}</div>
+        <div class="route-info-meta">${formatDistance(option.distance)}, ${formatDuration(option.duration)}</div>
+        <div class="route-info-badge ${option.isHotspotFree ? '' : 'risky'}">${badgeText}</div>
+        <div class="route-step-list">${stepsHtml || '<div class="route-step"><div class="route-step-text">No step details available.</div></div>'}</div>
+    `;
+    routeInfoPanel.classList.add('active');
+}
+
+function routeSignature(route){
+    if(!route?.coordinates?.length) return '';
+    const coords = route.coordinates;
+    const indexes = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((step) => {
+        return Math.floor(((coords.length - 1) * step) / 8);
+    });
+    return indexes.map((idx) => {
+        const point = coords[Math.max(0, Math.min(coords.length - 1, idx))];
+        return `${point.lat.toFixed(4)},${point.lng.toFixed(4)}`;
+    }).join('|') + `|${coords.length}|${Math.round(route.summary?.totalDistance || coords.length)}`;
+}
+
+function routeSummary(route, primaryScore){
+    const score = routeHotspotScore(route.coordinates);
+    return {
+        id: 'main',
+        label: 'Route 1 - Main',
+        route,
+        score,
+        primaryScore,
+        isHotspotFree: score === 0,
+        distance: route.summary?.totalDistance || Number.POSITIVE_INFINITY,
+        duration: route.summary?.totalTime || 0
+    };
+}
+
+function showPrimaryRouteSelection(){
+    if(!window.currentRouteContext?.primaryOption?.route) return;
+    clearAlternativeRouteLayer();
+    renderRouteInfo(window.currentRouteContext.primaryOption);
+    fitRoute(window.currentRouteContext.primaryOption.route);
+}
+
+function buildHotspotRouteOptions(primaryRoute){
+    const primaryScore = routeHotspotScore(primaryRoute.coordinates || []);
+    return [
+        {
+            id: 'main',
+            label: 'Route 1 - Main',
+            route: primaryRoute,
+            primaryScore,
+            score: primaryScore,
+            isHotspotFree: primaryScore === 0
+        },
+        {
+            id: 'left-bypass',
+            label: 'Route 2 - Left Bypass',
+            side: -1,
+            variant: 0,
+            route: null,
+            primaryScore,
+            score: Number.POSITIVE_INFINITY,
+            isHotspotFree: false
+        },
+        {
+            id: 'right-bypass',
+            label: 'Route 3 - Right Bypass',
+            side: 1,
+            variant: 0,
+            route: null,
+            primaryScore,
+            score: Number.POSITIVE_INFINITY,
+            isHotspotFree: false
+        }
+    ];
+}
+
+function setRouteOptionsStatus(message, color = '#8a5200'){
+    const status = document.getElementById('routeOptionsStatus');
+    if(!status) return;
+    status.innerText = message || '';
+    status.style.color = color;
+}
+
+async function resolveDeferredRouteOption(option){
+    if(option?.route?.coordinates?.length) return option;
+    if(!option?.side || !window.currentRouteContext) return null;
+
+    const { startPoint, endPoint, primaryOption } = window.currentRouteContext;
+    const attempts = [option.variant || 0, (option.variant || 0) + 1, (option.variant || 0) + 2];
+
+    for(const variant of attempts){
+        const route = await generateStepwiseAlternativeRoute(startPoint, endPoint, option.side, variant);
+        if(!route?.coordinates?.length) continue;
+        if(routeSignature(route) === routeSignature(primaryOption.route)) continue;
+
+        option.route = route;
+        option.variant = variant;
+        option.score = routeHotspotScore(route.coordinates);
+        option.isHotspotFree = option.score === 0;
+        option.distance = route.summary?.totalDistance || Number.POSITIVE_INFINITY;
+        option.duration = route.summary?.totalTime || 0;
+        return option;
+    }
+
+    return null;
+}
+
+async function handleRouteOptionSelection(option, button){
+    if(!option) return;
+
+    if(option.id === 'main'){
+        showPrimaryRouteSelection();
+        setRouteOptionsStatus('Main route is selected.', '#1a73e8');
+        return;
+    }
+
+    const originalLabel = option.label || button.innerText;
+    button.disabled = true;
+    button.innerText = `${originalLabel}...`;
+    setRouteOptionsStatus(`Building ${originalLabel.toLowerCase()} on real roads...`, '#8a5200');
+
+    try{
+        const resolved = await resolveDeferredRouteOption(option);
+        if(!resolved?.route){
+            setRouteOptionsStatus(`${originalLabel} could not be built on real roads for this route.`, '#cf1322');
+            return;
+        }
+
+        drawAlternativeRoute(resolved.route, resolved.isHotspotFree ? '#0f9d58' : '#ff8f00');
+        renderRouteInfo(resolved);
+        fitRoute(resolved.route);
+        if(resolved.isHotspotFree){
+            setRouteOptionsStatus(`${originalLabel} is ready and avoids the hotspot.`, '#166534');
+        }else{
+            setRouteOptionsStatus(`${originalLabel} is ready on real roads, but it may still pass some risk area.`, '#8a5200');
+        }
+    }finally{
+        button.disabled = false;
+        button.innerText = originalLabel;
+    }
+}
+
+function renderRouteChoices(container, options){
+    const existing = document.getElementById('routeChoicesWrap');
+    if(existing) existing.remove();
+    if(!options?.length) return;
+
+    const wrap = document.createElement('div');
+    wrap.id = 'routeChoicesWrap';
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.gap = '8px';
+    wrap.style.marginBottom = '10px';
+
+    const title = document.createElement('div');
+    title.style.fontWeight = '700';
+    title.style.color = '#1a3d7c';
+    title.innerText = 'Route Options';
+    wrap.appendChild(title);
+
+    options.slice(0, 3).forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.style.background = index === 0 ? '#1a73e8' : '#0f9d58';
+        btn.style.color = '#fff';
+        btn.style.fontWeight = '700';
+
+        let label = option.label || `Route ${index + 1}`;
+        if(!option.label){
+            if(index === 0){
+                label = `Route 1 - Main`;
+            }else if(option.isHotspotFree){
+                label = `Route ${index + 1} - Safe`;
+            }else if(option.score < option.primaryScore){
+                label = `Route ${index + 1} - Safer`;
+            }else{
+                label = `Route ${index + 1} - Alt`;
+            }
+        }
+        btn.innerText = label;
+
+        btn.onclick = async () => {
+            await handleRouteOptionSelection(option, btn);
+        };
+
+        wrap.appendChild(btn);
+    });
+
+    const status = document.createElement('div');
+    status.id = 'routeOptionsStatus';
+    status.style.fontSize = '13px';
+    status.style.color = '#8a5200';
+    status.style.padding = '4px 2px 0 2px';
+    status.innerText = options.some((option) => option.side)
+        ? 'Route 2 and Route 3 will build real left/right bypass routes when you tap them.'
+        : '';
+    wrap.appendChild(status);
+
+    container.prepend(wrap);
+}
+
+function findFirstHotspotEncounter(coords, threshold = 200){
+    for(let index = 0; index < coords.length; index += 1){
+        const point = coords[index];
+        let nearestHotspot = null;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+
+        for(const hotspot of hotspots){
+            const distance = map.distance([point.lat, point.lng], [hotspot.lat, hotspot.lng]);
+            if(distance < nearestDistance){
+                nearestDistance = distance;
+                nearestHotspot = hotspot;
+            }
+        }
+
+        if(nearestHotspot && nearestDistance <= threshold){
+            return { index, point, hotspot: nearestHotspot, distance: nearestDistance };
+        }
+    }
+
+    return null;
+}
+
+function computeTurnAngle(prevPoint, currentPoint, nextPoint){
+    const v1x = currentPoint.lng - prevPoint.lng;
+    const v1y = currentPoint.lat - prevPoint.lat;
+    const v2x = nextPoint.lng - currentPoint.lng;
+    const v2y = nextPoint.lat - currentPoint.lat;
+    const mag1 = Math.hypot(v1x, v1y) || 1;
+    const mag2 = Math.hypot(v2x, v2y) || 1;
+    const cosine = Math.max(-1, Math.min(1, ((v1x * v2x) + (v1y * v2y)) / (mag1 * mag2)));
+    return Math.acos(cosine) * (180 / Math.PI);
+}
+
+function findPreviousTurnIndex(coords, fromIndex){
+    for(let i = Math.max(4, fromIndex - 4); i >= 4; i -= 1){
+        const angle = computeTurnAngle(coords[i - 3], coords[i], coords[Math.min(coords.length - 1, i + 3)]);
+        if(angle >= 18){
+            return i;
+        }
+    }
+
+    return Math.max(2, fromIndex - 8);
+}
+
+function findNextTurnIndex(coords, fromIndex){
+    for(let i = Math.min(coords.length - 5, fromIndex + 4); i <= coords.length - 5; i += 1){
+        const angle = computeTurnAngle(coords[i - 3], coords[i], coords[i + 3]);
+        if(angle >= 18){
+            return i;
+        }
+    }
+
+    return Math.min(coords.length - 3, fromIndex + 8);
+}
+
+function buildBypassWaypointsForEncounter(coords, encounter, side = 1, variant = 0){
+    const beforeIndex = findPreviousTurnIndex(coords, encounter.index);
+    const afterIndex = findNextTurnIndex(coords, encounter.index);
+    const beforePoint = coords[beforeIndex] || encounter.point;
+    const afterPoint = coords[afterIndex] || encounter.point;
+    const tangentLat = afterPoint.lat - beforePoint.lat;
+    const tangentLng = afterPoint.lng - beforePoint.lng;
+    const tangentLength = Math.hypot(tangentLat, tangentLng) || 1;
+    const unitPerpLat = (-tangentLng / tangentLength) * side;
+    const unitPerpLng = (tangentLat / tangentLength) * side;
+    const clearance = variant === 0 ? 0.0065 : 0.009;
+    const lead = variant === 0 ? 0.0028 : 0.0042;
+
+    return [
+        {
+            point: L.latLng(
+                beforePoint.lat + (unitPerpLat * clearance),
+                beforePoint.lng + (unitPerpLng * clearance)
+            ),
+            progress: beforeIndex + 0.1
+        },
+        {
+            point: L.latLng(
+                encounter.hotspot.lat + (unitPerpLat * (clearance * 1.3)) - ((tangentLat / tangentLength) * lead),
+                encounter.hotspot.lng + (unitPerpLng * (clearance * 1.3)) - ((tangentLng / tangentLength) * lead)
+            ),
+            progress: encounter.index + 0.2
+        },
+        {
+            point: L.latLng(
+                encounter.hotspot.lat + (unitPerpLat * (clearance * 1.3)) + ((tangentLat / tangentLength) * lead),
+                encounter.hotspot.lng + (unitPerpLng * (clearance * 1.3)) + ((tangentLng / tangentLength) * lead)
+            ),
+            progress: encounter.index + 0.3
+        },
+        {
+            point: L.latLng(
+                afterPoint.lat + (unitPerpLat * clearance),
+                afterPoint.lng + (unitPerpLng * clearance)
+            ),
+            progress: afterIndex + 0.4
+        }
+    ];
+}
+
+async function generateStepwiseAlternativeRoute(startPoint, endPoint, side = 1, variant = 0){
+    let route = await requestRoute([startPoint, endPoint]);
+    if(!route?.coordinates?.length) return null;
+
+    const waypointModels = [];
+
+    for(let iteration = 0; iteration < 4; iteration += 1){
+        const encounter = findFirstHotspotEncounter(route.coordinates);
+        if(!encounter) return route;
+
+        const bypassModels = buildBypassWaypointsForEncounter(route.coordinates, encounter, side, variant + iteration);
+        if(!bypassModels.length) return route;
+
+        waypointModels.push(...bypassModels);
+        waypointModels.sort((a, b) => a.progress - b.progress);
+
+        route = await requestRoute(
+            [startPoint].concat(waypointModels.map((item) => item.point)).concat([endPoint])
+        );
+
+        if(!route?.coordinates?.length){
+            return null;
+        }
+    }
+
+    return route;
+}
+
+function renderAlternativeRouteSection(container, touches, startPoint, endPoint){
+    const existing = document.getElementById('safeAlternativeWrap');
+    if(existing) existing.remove();
+
+    if(!touches) return;
+
+    const wrap = document.createElement('div');
+    wrap.id = 'safeAlternativeWrap';
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.gap = '8px';
+    wrap.style.marginBottom = '10px';
+
+    const info = document.createElement('div');
+    info.style.padding = '10px 12px';
+    info.style.borderRadius = '10px';
+    info.style.background = '#fff7e6';
+    info.style.color = '#8a5200';
+    info.style.border = '1px solid #ffd591';
+    info.style.fontSize = '13px';
+    info.innerText = 'Current route touches a hotspot. Use Route 2 and Route 3 to build real left/right bypass routes.';
+    wrap.appendChild(info);
+
+    container.appendChild(wrap);
 }
 
 function updateSafetyButtonState(){
@@ -708,19 +1342,21 @@ function updateAlertCountdownText(){
 }
 
 async function sendRescueEmail(){
-    const myEmail = (document.getElementById('sosMyEmail')?.value || '').trim();
+    const myContactNo = (document.getElementById('sosMyContactNo')?.value || '').trim();
     const toEmail = (document.getElementById('sosToEmail')?.value || '').trim();
     const body = (document.getElementById('sosBody')?.value || '').trim();
 
-    if(!myEmail || !toEmail || !body){
-        updateSafetyStatus('Rescue email could not be sent because email fields are incomplete.', '#d93025');
+    if(!myContactNo || !toEmail || !body){
+        updateSafetyStatus('Rescue email could not be sent because required fields are incomplete.', '#d93025');
         return;
     }
 
-    let location = {};
-    if(liveLocationMarker){
-        const latLng = liveLocationMarker.getLatLng();
-        location = { lat: latLng.lat, lng: latLng.lng };
+    let location;
+    try{
+        location = await getRequiredRescueLocation();
+    }catch(error){
+        updateSafetyStatus(error.message || 'Current location is required before sending the rescue email.', '#d93025');
+        return;
     }
 
     try{
@@ -728,7 +1364,7 @@ async function sendRescueEmail(){
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                my_email: myEmail,
+                my_contact_no: myContactNo,
                 to_email: toEmail,
                 body,
                 stationary_minutes: safetySettings.minutes,
@@ -744,6 +1380,35 @@ async function sendRescueEmail(){
     }catch(error){
         updateSafetyStatus(error.message || 'Failed to send rescue email.', '#d93025');
     }
+}
+
+async function getRequiredRescueLocation(){
+    if(liveLocationMarker){
+        const latLng = liveLocationMarker.getLatLng();
+        return { lat: latLng.lat, lng: latLng.lng };
+    }
+
+    if(!navigator.geolocation){
+        throw new Error('Location access is not supported in this browser.');
+    }
+
+    const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        });
+    }).catch(() => {
+        throw new Error('Current location could not be captured. Please allow location access and try again.');
+    });
+
+    const location = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+    };
+
+    handleLiveLocation(position);
+    return location;
 }
 
 async function sendTestRescueEmail(){
@@ -858,13 +1523,13 @@ function validateSafetySettings(){
     const timeInput = document.getElementById('sosAlertMinutes');
     const countdownInput = document.getElementById('sosNotificationMinutes');
     const pinInput = document.getElementById('sosPin');
-    const myEmailInput = document.getElementById('sosMyEmail');
+    const myContactNoInput = document.getElementById('sosMyContactNo');
     const toEmailInput = document.getElementById('sosToEmail');
     const bodyInput = document.getElementById('sosBody');
     const minutes = Number(timeInput?.value);
     const countdownMinutes = Number(countdownInput?.value);
     const pin = (pinInput?.value || '').trim();
-    const myEmail = (myEmailInput?.value || '').trim();
+    const myContactNo = (myContactNoInput?.value || '').trim();
     const toEmail = (toEmailInput?.value || '').trim();
     const body = (bodyInput?.value || '').trim();
 
@@ -883,12 +1548,12 @@ function validateSafetySettings(){
         return null;
     }
 
-    if(!myEmail || !toEmail || !body){
-        updateSafetyStatus('Please fill My email, To Mail and text body.', '#d93025');
+    if(!myContactNo || !toEmail || !body){
+        updateSafetyStatus('Please fill My Contact No., To Mail and text body.', '#d93025');
         return null;
     }
 
-    return { minutes, countdownMinutes, pin, myEmail, toEmail, body };
+    return { minutes, countdownMinutes, pin, myContactNo, toEmail, body };
 }
 
 function clearLiveLocationLayers(){
@@ -1033,7 +1698,7 @@ if(sosSafeBtn){
     });
 }
 
-function findRoute(){
+async function findRoute(){
     if(!startSug.dataset.lat||!endSug.dataset.lat){
         alert("Select from suggestions");
         return;
@@ -1041,91 +1706,49 @@ function findRoute(){
 
     stopSafetyMode();
 
-    let s=L.latLng(startSug.dataset.lat,startSug.dataset.lng);
-    let e=L.latLng(endSug.dataset.lat,endSug.dataset.lng);
+    const s=L.latLng(startSug.dataset.lat,startSug.dataset.lng);
+    const e=L.latLng(endSug.dataset.lat,endSug.dataset.lng);
 
-    if(routeCtrl) map.removeControl(routeCtrl);
     if(mA) map.removeLayer(mA);
     if(mB) map.removeLayer(mB);
+    clearRenderedRoutes();
+    clearRouteUi();
+    window.currentPrimaryRouteCoords = [];
+    window.currentRouteOptions = [];
+    window.currentRouteContext = null;
 
     mA=L.marker(s,{icon:makeIcon("A")}).addTo(map);
     mB=L.marker(e,{icon:makeIcon("B")}).addTo(map);
 
-    routeCtrl=L.Routing.control({
-        waypoints:[s,e],
-        showAlternatives:true,
-        alternatives:2,
-        addWaypoints:false,
-        draggableWaypoints:false,
-        createMarker:()=>null
-    }).addTo(map);
+    const primaryRoute = await requestRoute([s, e]);
+    if(!primaryRoute?.coordinates?.length){
+        alert('Route could not be created right now.');
+        return;
+    }
 
-    // clean previous alt UI
-    if(window.altRouteLayer){ map.removeLayer(window.altRouteLayer); window.altRouteLayer = null; }
+    window.currentPrimaryRouteCoords = primaryRoute.coordinates;
+    drawPrimaryRoute(primaryRoute);
 
-    routeCtrl.on('routesfound',e=>{
-        window.currentRoutes = e.routes; // store globally for alt-button access
-        const routes = e.routes; // primary + alternatives
-        const primary = routes[0];
-        const primaryCoords = primary.coordinates;
+    const primaryOption = routeSummary(primaryRoute, routeHotspotScore(primaryRoute.coordinates));
+    const touches = routeTouchesHotspot(primaryRoute.coordinates);
+    if(touches) showDangerToast();
+    showNearestStations(primaryRoute.coordinates);
 
-        // always show primary (Routing control handles drawing it)
-        const touches = routeTouchesHotspot(primaryCoords);
-        if(touches) showDangerToast();
-        showNearestStations(primaryCoords);
+    window.currentRouteContext = {
+        startPoint: s,
+        endPoint: e,
+        primaryOption
+    };
 
-        // find a safe alternative among provided alternatives
-        window.currentSafeAlt = null;
-        for(let i=1;i<routes.length;i++){
-            if(!routeTouchesHotspot(routes[i].coordinates)){
-                window.currentSafeAlt = routes[i];
-                break;
-            }
-        }
+    const container = document.getElementById('nearestThanas');
+    window.currentRouteOptions = touches
+        ? buildHotspotRouteOptions(primaryRoute)
+        : [primaryOption];
 
-        // if no safe alternative provided by router, try to compute one by adding small detours
-        async function tryComputeSafeAlternate(){
-            if(window.currentSafeAlt) return window.currentSafeAlt;
-            try{
-                const router = L.Routing.osrmv1();
-                const primaryPoints = primaryCoords;
-                // sample points along route
-                const step = Math.max(5, Math.floor(primaryPoints.length/10));
-                const offsets = [0.005,-0.005,0.007,-0.007,0,0.006,-0.006];
-
-                for(let i=step;i<primaryPoints.length-step;i+=step){
-                    const p = primaryPoints[i];
-                    for(const off of offsets){
-                        const detour = L.latLng(p.lat + off, p.lng);
-                        // route via detour using the original start/end `s` and `e`
-                        const waypoints = [s, detour, e];
-                        const result = await new Promise((res,rej)=>{
-                            router.route(waypoints, (err, routes)=>{ if(err) return res(null); res(routes && routes.length? routes[0] : null); });
-                        });
-                        if(result && !routeTouchesHotspot(result.coordinates)){
-                            return result;
-                        }
-                    }
-                    for(const off of offsets){
-                        const detour = L.latLng(p.lat, p.lng + off);
-                        const waypoints = [s, detour, e];
-                        const result = await new Promise((res,rej)=>{
-                            router.route(waypoints, (err, routes)=>{ if(err) return res(null); res(routes && routes.length? routes[0] : null); });
-                        });
-                        if(result && !routeTouchesHotspot(result.coordinates)){
-                            return result;
-                        }
-                    }
-                }
-            }catch(e){/* ignore errors */}
-            return null;
-        }
-
-        const container = document.getElementById('nearestThanas');
-        // alternative route UI removed per user request
-    });
-
-    map.fitBounds(L.featureGroup([mA,mB]).getBounds().pad(0.3));
+    renderRouteChoices(container, window.currentRouteOptions);
+    renderAlternativeRouteSection(container, touches, s, e);
+    renderRouteInfo(primaryOption);
+    fitRoute(primaryRoute);
 }
 
 /* ================= HOTSPOT CHECK ================= */
@@ -1232,17 +1855,23 @@ function showNearestStations(routeCoords, radiusMeters = 1000){
     sosPanel.className = 'sos-panel';
     sosPanel.innerHTML = `
         <label for="sosAlertMinutes">Alert notification time after</label>
-        <input id="sosAlertMinutes" type="number" min="1" step="1" placeholder="Time in minutes">
+        <div class="sos-input-suffix">
+            <input id="sosAlertMinutes" type="number" min="1" step="1" placeholder="">
+            <span>Minute</span>
+        </div>
         <label for="sosNotificationMinutes">set the notification during time</label>
-        <input id="sosNotificationMinutes" type="number" min="1" step="1" placeholder="Countdown in minutes">
+        <div class="sos-input-suffix">
+            <input id="sosNotificationMinutes" type="number" min="1" step="1" placeholder="">
+            <span>Minute</span>
+        </div>
         <label for="sosPin">Set 4 digit PIN number</label>
         <input id="sosPin" type="password" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="4 digit PIN">
-        <label for="sosMyEmail">My email</label>
-        <input id="sosMyEmail" type="email" placeholder="your@email.com">
+        <label for="sosMyContactNo">My Contact No.</label>
+        <input id="sosMyContactNo" type="text" inputmode="tel" placeholder="01XXXXXXXXX">
         <label for="sosToEmail">To Mail</label>
         <input id="sosToEmail" type="email" placeholder="rescue@email.com">
         <label for="sosBody">Text body</label>
-        <textarea id="sosBody" placeholder="Write the rescue message that should be emailed."></textarea>
+        <textarea id="sosBody" placeholder="I may in danger, Try to contact me now.">I may in danger, Try to contact me now.</textarea>
         <div class="sos-help">If you stay within 50 meters longer than this time, an alert will appear with sound.</div>
         <div id="sosStatus" class="sos-status"></div>
         <div class="sos-actions">

@@ -101,42 +101,40 @@ def get_hotspots():
 def send_sos_email():
     payload = request.get_json(silent=True) or {}
 
-    my_email = (payload.get("my_email") or "").strip()
+    my_contact_no = (payload.get("my_contact_no") or "").strip()
     to_email = (payload.get("to_email") or "").strip()
     body = (payload.get("body") or "").strip()
     stationary_minutes = payload.get("stationary_minutes")
     countdown_minutes = payload.get("countdown_minutes")
     location = payload.get("location") or {}
 
-    if not my_email or not to_email or not body:
-        return jsonify({"ok": False, "error": "Missing required email fields."}), 400
+    if not my_contact_no or not to_email or not body:
+        return jsonify({"ok": False, "error": "Missing required contact or email fields."}), 400
+
+    if location.get("lat") is None or location.get("lng") is None:
+        return jsonify({"ok": False, "error": "Last known location is required."}), 400
 
     smtp_host = os.getenv("SMTP_HOST") or "smtp.gmail.com"
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
     smtp_username = os.getenv("SMTP_USERNAME")
     smtp_password = os.getenv("SMTP_PASSWORD")
-    smtp_from = os.getenv("SMTP_FROM") or smtp_username or my_email
+    smtp_from = os.getenv("SMTP_FROM") or smtp_username
     smtp_use_tls = os.getenv("SMTP_USE_TLS", "true").lower() != "false"
 
     if not smtp_host or not smtp_username or not smtp_password:
         return jsonify({"ok": False, "error": "SMTP is not configured on the server."}), 500
 
-    location_text = "Unavailable"
-    if location.get("lat") is not None and location.get("lng") is not None:
-        location_text = f'{location["lat"]}, {location["lng"]}'
+    location_text = f'{location["lat"]}, {location["lng"]}'
 
     message = EmailMessage()
     message["Subject"] = "SOS Rescue Alert"
     message["From"] = smtp_from
     message["To"] = to_email
-    message["Reply-To"] = my_email
     message.set_content(
         f"SOS rescue mail triggered.\n\n"
-        f"My Email: {my_email}\n"
+        f"My Contact No.: {my_contact_no}\n"
         f"To Mail: {to_email}\n"
-        f"Stationary alert after: {stationary_minutes} minute(s)\n"
-        f"Notification countdown: {countdown_minutes} minute(s)\n"
-        f"Last known location: {location_text}\n\n"
+        f"My Last known location: {location_text}\n\n"
         f"Message:\n{body}\n"
     )
 

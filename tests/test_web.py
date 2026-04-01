@@ -20,6 +20,20 @@ def test_send_sos_email_requires_fields():
     assert response.get_json()["ok"] is False
 
 
+def test_send_sos_email_requires_location():
+    test_client = web.app.test_client()
+    response = test_client.post(
+        "/send_sos_email",
+        json={
+            "my_contact_no": "01700111222",
+            "to_email": "rescue@example.com",
+            "body": "Please help me.",
+        },
+    )
+    assert response.status_code == 400
+    assert response.get_json()["ok"] is False
+
+
 def test_send_sos_email_success(monkeypatch):
     sent_messages = []
 
@@ -55,7 +69,7 @@ def test_send_sos_email_success(monkeypatch):
     response = test_client.post(
         "/send_sos_email",
         json={
-            "my_email": "me@example.com",
+            "my_contact_no": "01700111222",
             "to_email": "rescue@example.com",
             "body": "Please help me.",
             "stationary_minutes": 3,
