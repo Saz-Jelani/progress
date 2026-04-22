@@ -1,0 +1,341 @@
+Date,Time,Shift,Place,Crime type,Gender,Latitude,Longitude,Link
+2025-10-20,5:30,Morning,Rayerbag,Robbery,Male,23.69612163,90.46129703,https://www.thedailystar.net/news/bangladesh/crime-justice/news/police-constable-stabbed-mugged-rayerbagh-4014586
+2025-10-25,20:45,Night,Manik Mia Avenue,Robbery,Male,23.75845419,90.37923352,https://www.thedailystar.net/news/bangladesh/crime-justice/news/senior-judge-mugged-dhakas-manik-mia-avenue-phone-snatched
+2025-10-27,14:20,Noon,Bosila,Harassment,Female,23.75453459,90.35929947,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-sent-jail-assaulting-woman-dhaka-bus-4024031
+2025-10-01,23:15,Night,Adabor,Stab,Male,23.77306961,90.35310983,https://www.thedailystar.net/news/bangladesh/crime-justice/news/constable-stabbed-during-rescue-drive-adabor-around-100-detained
+2025-09-07,15:30,Noon,Mohammadpur,Robbery,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/mob-beats-youth-death-dhaka-3981246
+2025-09-11,9:15,Morning,Kadamtali,Body Found,Female,23.70090168,90.39521261,https://www.thedailystar.net/news/bangladesh/crime-justice/news/womans-body-found-sack-kadamtali-3984256
+2025-09-14,21:30,Night,Kalshi,Stab,Female,23.82213399,90.37577949,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-shot-sister-stabbed-dhakas-kalshi-3985906
+2025-09-14,21:30,Night,Kalshi,Stab,Male,23.82213399,90.37577949,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-shot-sister-stabbed-dhakas-kalshi-3985906
+2025-09-15,9:00,Morning,Adabor,Murder,Male,23.77306961,90.35310983,https://www.thedailystar.net/news/bangladesh/news/man-killed-adabor-3987516
+2025-09-26,10:00,Morning,300 Feet,Body Found,Male,23.83745068,90.4824847,https://www.thedailystar.net/news/bangladesh/news/missing-ex-sad-leader-found-dhaka-mosque-after-four-days-3995376
+2025-09-26,16:00,Afternoon,Lalbagh,Body Found,Male,23.72709665,90.38545471,https://www.thedailystar.net/news/bangladesh/crime-justice/news/bankers-body-recovered-dhakas-lalbagh-3995656
+2025-09-28,13:45,Noon,Mirpur 12,Stab,Male,23.82819417,90.36415407,https://www.thedailystar.net/news/bangladesh/crime-justice/news/youth-stabbed-death-mirpur-3997676
+2025-11-12,15:00,Noon,Shahbag,Body Found,Male,23.74015268,90.39394146,https://www.thedailystar.net/news/bangladesh/crime-justice/news/dismembered-body-found-plastic-drums-near-hc-4034371
+2025-11-16,18:40,Evening,Pallabi,Murder,Male,23.83495094,90.36072457,https://www.thedailystar.net/news/bangladesh/crime-justice/news/jubo-dal-leader-shot-dead-pallabi-shop-4037586
+2025-11-24,3:00,Night,Uttara,Stab,Male,23.87821376,90.37210683,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-traders-stabbed-mugged-tk-148-lakh-dhakas-uttara-4042486
+2025-10-05,6:30,Morning,Gendaria,Body Found,Female,23.70241441,90.42550075,https://www.thedailystar.net/news/bangladesh/crime-justice/news/womans-body-found-near-gendaria-railway-station-4002331
+2025-10-09,21:30,Night,Shahbag,Body Found,Male,23.74015268,90.39394146,https://www.thedailystar.net/news/bangladesh/crime-justice/news/police-recover-three-bodies-dhakas-shahbagh-area-4006796
+2025-10-09,21:30,Night,Dhaka University,Body Found,Female,23.73405631,90.39292519,https://www.thedailystar.net/news/bangladesh/crime-justice/news/police-recover-three-bodies-dhakas-shahbagh-area-4006796
+2025-10-09,0:00,Night,Dhaka Central Shaheed Minar,Body Found,Male,23.72735584,90.39664645,https://www.thedailystar.net/news/bangladesh/crime-justice/news/police-recover-three-bodies-dhakas-shahbagh-area-4006796
+2025-10-12,2:30,Night,Khilgaon,Robbery+Stab,Male,23.75655672,90.46777585,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-shot-motorcycle-snatched-khilgaon-4007891
+2025-10-12,16:00,Afternoon,Jurain,Murder,Male,23.69045675,90.43751938,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-killed-over-tk-6000-loan-4009431
+2025-10-12,23:15,Night,Kalabagan,Body Found,Female,23.74944007,90.38294715,https://www.thedailystar.net/news/bangladesh/crime-justice/news/womans-body-found-inside-freezer-kalabagan-flat-4009416
+2025-10-14,19:00,Evening,Savar,Rape,Female,23.84918682,90.25762639,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-arrested-over-rape-university-student-savar-4013841
+2025-10-18,18:00,Evening,Armanitola,Murder,Male,23.71493723,90.40185498,https://www.thedailystar.net/news/bangladesh/crime-justice/news/jnu-student-found-dead-old-dhaka-4014321
+2025-07-25,23:30,Night,Kamalapur,Murder,Female,23.73389992,90.42700763,https://www.thedailystar.net/news/bangladesh/crime-justice/news/woman-hacked-death-kamalapur-railway-station-youth-held-3971226
+2025-07-25,21:00,Night,Kadamtali,Stab,Male,23.70090168,90.39521261,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-stabbed-death-kadamtali-3971001
+2025-07-17,19:00,Evening,Jurain,Body Found,Male,23.69045675,90.43751938,https://www.thedailystar.net/news/bangladesh/crime-justice/news/2-bodies-recovered-footpath-dhakas-jurain-3965666
+2025-07-16,3:30,Afternoon,Lalbagh,Assault,Male,23.72709665,90.38545471,https://www.thedailystar.net/news/bangladesh/crime-justice/news/mob-beats-man-death-lalbagh-3964466
+2025-07-13,4:30,Night,Banani,Stab,Male,23.79506935,90.40338809,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-stabbed-death-banani-shisha-lounge-3962336
+2025-06-29,20:45,Night,Lalmatia,Stab+Assault,Male,23.75899818,90.36776648,https://www.thedailystar.net/news/bangladesh/crime-justice/news/du-jnu-students-assaulted-lalmatia-one-stabbed-3955161
+2025-06-27,5:30,Night,Gendaria,Robbery+Murder,Male,23.70241441,90.42550075,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-hacked-death-gendaria-3948851
+2025-06-25,13:30,Noon,Mohammadpur,Stab,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-killed-broad-daylight-rayer-bazar-3948326
+2025-07-24,20:45,Night,Ashulia,Gang Rape,Female,23.89804844,90.33052287,https://www.thedailystar.net/news/bangladesh/crime-justice/news/three-held-over-rape-eighth-grader-ashulia-3948266
+2025-07-24,0:15,Night,Mohammadpur,Mugging,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/mugging-journalist-4-cops-withdrawn-over-inaction-3947876
+2025-07-24,10:00,Morning,Demra,Robbery,Female,23.72072235,90.48339703,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-beaten-death-demra-3946126
+2025-07-18,0:15,Night,Dhanmondi,Mugging,Male,23.74471266,90.37573317,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-mugged-metres-duty-traffic-police-3942676
+2025-07-11,6:00,Morning,Shyamoli,Mugging,Male,23.77106268,90.3631185,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-accused-confess-armed-robbery-shyamoli-3942611
+2025-07-13,,Night,Savar,Gang Rape,Female,23.84918682,90.25762639,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-cases-filed-over-gang-rape-and-murder-savar-3941796
+2025-07-15,19:00,Evening,Adabor,Murder,Male,23.77306961,90.35310983,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-shot-dead-during-arbitration-adabar-3941491
+2025-07-14,22:30,Night,Mohakhali,Rape,Female,23.77781541,90.40707836,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-held-over-rape-9-yr-old-girl-mohakhali-3940166
+2025-07-08,17:00,Afternoon,Old Dhaka,Murder,Male,23.72934321,90.37781043,https://www.thedailystar.net/news/bangladesh/crime-justice/news/justice-sohag-students-people-rally-nationwide-3938191
+2025-07-05,18:00,Evening,Bhasantek,Body Found,Female,23.81114757,90.39468436,https://www.thedailystar.net/news/bangladesh/crime-justice/news/8-yr-old-found-dead-bhasantek-family-suspects-murder-3933611
+2025-07-03,10:00,Morning,Green Road,Mugging,Female,23.7492289,90.38647608,https://www.thedailystar.net/news/bangladesh/crime-justice/news/hsc-examinee-allegedly-mugged-stabbed-green-road-3931566
+2025-06-30,23:30,Morning,Nazim Uddin Road,Mugging,Male,23.7218545,90.39944855,https://www.thedailystar.net/news/bangladesh/crime-justice/news/ssc-examinee-stabbed-muggers-mobile-dies-dmch-3930646
+2025-06-27,14:30,Noon,Savar,Stab,Male,23.84918682,90.25762639,https://www.thedailystar.net/news/bangladesh/crime-justice/news/savar-rickshaw-puller-dies-day-after-stabbing-3927991
+2025-06-25,,Night,Suhrawardy Hospital,Stab,Male,23.76937524,90.37139645,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-stabbed-death-front-suhrawardy-hospital-3925321
+2025-06-12,5:00,Morning,Wari,Mugging,Male,23.71756825,90.41688171,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-injured-mugging-incidents-capital-3916381
+2025-06-12,,Night,Mohammadpur,Mugging,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-injured-mugging-incidents-capital-3916381
+2025-06-22,,Night,Mirpur 11,Stab,Male,23.8171034,90.36738198,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-killed-separate-stabbing-incidents-mirpur-kamrangirchar
+2025-06-22,0:00,Night,Kamrangirchar,Stab,Male,23.71832025,90.36825597,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-killed-separate-stabbing-incidents-mirpur-kamrangirchar
+2025-06-11,23:30,Morning,Sabujbagh,Body Found,Male,23.73955593,90.44388434,https://www.thedailystar.net/news/bangladesh/crime-justice/news/dismembered-body-missing-trader-found-3915371
+2025-06-09,8:00,Morning,Mirpur 11,Body Found,Male,23.8171034,90.36738198,https://www.thedailystar.net/news/bangladesh/crime-justice/news/mans-hacked-body-recovered-mirpur-11-3913846
+2025-06-01,14:30,Noon,Darus Salam,Murder,Male,23.78358762,90.3527823,https://www.thedailystar.net/news/bangladesh/crime-justice/news/mob-kills-two-citys-darus-salam-3907931
+2025-05-27,,Morning,Dakshinkhan,Murder,Female,23.86341015,90.42988723,https://www.thedailystar.net/news/bangladesh/crime-justice/news/couple-2-others-murdered-city-3905501
+2025-05-26,10:00,Morning,Mirpur,Shot,Male,23.84501091,90.37240731,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggers-shoot-money-changer-mirpur-take-tk-22-lakh-3904551
+2025-05-27,5:00,Night,Dakshinkhan,Murder,Female,23.86341015,90.42988723,https://www.thedailystar.net/news/bangladesh/crime-justice/news/woman-killed-husband-dhakas-dakkhinkhan-3905066
+2025-05-26,20:35,Night,Newmarket,Harassment,Female,22.56052535,88.35265114,https://www.thedailystar.net/news/bangladesh/crime-justice/news/3-vendors-held-over-attempted-murder-2-du-students-protesting
+2025-05-26,20:35,Night,Newmarket,Harassment,Male,22.56052535,88.35265114,https://www.thedailystar.net/news/bangladesh/crime-justice/news/3-vendors-held-over-attempted-murder-2-du-students-protesting
+2025-05-23,21:45,Night,Sayedabad,Stab,Male,23.79167481,90.42447231,https://www.thedailystar.net/news/bangladesh/crime-justice/news/2-sis-stabbed-during-anti-narcotics-drive-3902341
+2025-05-19,21:30,Night,Savar,Murder,Male,23.84918682,90.25762639,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-shot-dead-savar-3898586
+2025-05-16,20:00,Night,Dhanmondi,Murder,Male,23.75026584,90.36281044,https://www.thedailystar.net/news/bangladesh/crime-justice/news/photographer-killed-after-being-lured-fake-event-police-3897236
+2025-05-16,19:30,Evening,Zigatola,Stab,Male,23.73943092,90.37534087,https://www.thedailystar.net/news/bangladesh/crime-justice/news/two-stabbed-death-capital-3896401
+2025-04-26,5:45,Night,Siddheswari,Robbery,Female,23.74351,90.4089077,https://www.thedailystar.net/news/bangladesh/crime-justice/news/woman-dragged-along-road-muggers-car-snatching-incident-3881521
+2025-04-19,,Night,Hatirjheel,Murder,Male,23.77059284,90.41408237,https://www.thedailystar.net/news/bangladesh/crime-justice/news/jubo-dal-activist-shot-critically-injured-hatirjheel-3875526
+2025-04-18,16:00,Afternoon,Banani,Stab,Male,23.79043572,90.40308768,https://www.thedailystar.net/news/bangladesh/crime-justice/news/pvt-univ-student-stabbed-death-hours-after-brawl-3875236
+2025-04-17,0:30,Night,Shewrapara,Robbery,Female,23.79097764,90.37507371,https://www.thedailystar.net/news/bangladesh/crime-justice/news/one-held-over-shewrapara-mugging-3874261
+2025-04-01,19:00,Evening,Rampura,Harassment,Female,23.76126626,90.4209966,https://www.thedailystar.net/news/bangladesh/crime-justice/news/new-age-journo-stalked-assaulted-rampura-3862496
+2025-03-24,12:00,Noon,Diabari,Body Found,Male,23.79660413,90.34088418,https://www.thedailystar.net/news/bangladesh/crime-justice/news/ha-meem-group-gms-body-found-uttara-3857556
+2025-03-17,21:00,Night,Gulshan,Murder,Male,23.80221562,90.41073523,https://www.thedailystar.net/news/bangladesh/crime-justice/news/gulshan-murder-cops-suspect-gang-rivalry-3854406
+2025-03-17,23:00,Night,Pallabi,Rape,Female,23.83318624,90.35828808,https://www.thedailystar.net/news/bangladesh/crime-justice/news/woman-gang-raped-city-two-held-3851961
+2025-01-26,3:30,Night,Hazaribagh,Stab,Female,23.73624866,90.36474948,https://www.thedailystar.net/news/bangladesh/crime-justice/news/woman-stabbed-death-hazaribagh-3810251
+2025-01-28,18:30,Evening,Jatrabari,Stab,Male,23.7124583,90.43493089,https://www.thedailystar.net/news/bangladesh/crime-justice/news/engineer-stabbed-death-jatrabari-3810851
+2025-01-25,16:15,Afternoon,Mohammadpur,Mugging,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggings-even-daylight-rattle-mohammadpur-3810866
+2025-01-29,14:45,Noon,Adabor,Mugging,Male,23.77306961,90.35310983,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggers-hack-young-mans-hand-3812676
+2025-02-02,8:45,Morning,Hatirjheel,Murder,Female,23.77059284,90.41408237,https://www.thedailystar.net/news/bangladesh/crime-justice/news/13-year-old-girl-gang-raped-murder-dhaka-3815176
+2025-01-16,12:30,Noon,Dakshinkhan,Kidnap,Female,23.86341015,90.42988723,https://www.thedailystar.net/news/bangladesh/crime-justice/news/13-year-old-girl-gang-raped-murder-dhaka-3815176
+2025-02-06,19:30,Evening,Matuail,Murder,Male,23.70622973,90.46269167,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-stabbed-death-jatrabari-3818731
+2025-02-14,12:30,Noon,Savar,Mugging,Male,23.84918682,90.25762639,https://www.thedailystar.net/news/bangladesh/crime-justice/news/3-stabbed-muggers-moving-bus-savar-3824491
+2025-02-15,12:30,Noon,Dakshinkhan,Murder,Male,23.86341015,90.42988723,https://www.thedailystar.net/news/bangladesh/crime-justice/news/man-killed-during-robbery-dhakas-kawla-3824821
+2025-02-14,3:30,Night,Pallabi,Shot,Male,23.83318624,90.35828808,https://www.thedailystar.net/news/bangladesh/crime-justice/news/siblings-shot-pallabi-3824711
+2025-02-14,1:30,Night,Pallabi,Shot,Female,23.83318624,90.35828808,https://www.thedailystar.net/news/bangladesh/crime-justice/news/siblings-shot-pallabi-3824711
+2025-02-19,0:30,Night,Mohammadpur,Murder,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/2-shot-dead-gunfight-jt-forces-city-3829021
+2025-01-25,19:00,Evening,Mohammadpur,Mugging,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggings-even-daylight-rattle-mohammadpur-3810866
+2024-10-19,,Noon,Mohammadpur,Mugging,Female,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggings-even-daylight-rattle-mohammadpur-3810866
+2024-10-20,9:45,Morning,Mohammadpur,Mugging,,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggings-even-daylight-rattle-mohammadpur-3810866
+2024-10-21,6:30,Morning,Mohammadpur,Mugging,Female,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggings-even-daylight-rattle-mohammadpur-3810866
+2024-10-24,6:30,Morning,Mohammadpur,Mugging,Male,23.76779889,90.35642257,https://www.thedailystar.net/news/bangladesh/crime-justice/news/muggings-even-daylight-rattle-mohammadpur-3810866
+2026-02-21,14:00,Noon,Jatrabari,Stab,,23.70581847,90.43978836,https://www.prothomalo.com/bangladesh/crime/gs7pxpk6u4
+2026-01-31,21:00,Night,Kamrangirchar,Rape,Female,23.71822981,90.36777154,https://www.prothomalo.com/bangladesh/crime/1falel0b1v
+2026-01-10,16:00,Afternoon,Sabujbagh,Murder,Female,23.74847465,90.44091225,https://www.prothomalo.com/bangladesh/crime/ae235fuqkt
+2025-12-31,14:30,Noon,Hazaribagh,Murder,,23.73167883,90.36131558,https://www.prothomalo.com/bangladesh/crime/qe7ayxrb26
+2025-10-27,2:30,Night,Dhanmondi,Harassment,Female,23.74474912,90.37239535,https://www.prothomalo.com/bangladesh/capital/le26byz3e1
+2025-10-11,14:30,Noon,Rampura,Murder,,23.75896095,90.428403,https://www.prothomalo.com/bangladesh/crime/lp0p7qd0zl
+2025-10-05,10:00,Morning,Zigatola,Murder,,23.7448384,90.37820705,https://www.prothomalo.com/bangladesh/capital/3knr4xthkz
+2025-10-05,6:30,Morning,Gendaria,Murder,Female,23.70135681,90.42881002,https://www.prothomalo.com/bangladesh/crime/7j7v6kboe0
+2025-10-19,11:30,Morning,Armanitola,Stab,,23.71804275,90.40705616,https://www.prothomalo.com/bangladesh/crime/srtgbnf8d6
+2025-10-03,14:00,Noon,Shahbag,Murder,,23.73713986,90.40014754,https://www.prothomalo.com/bangladesh/capital/xfjmeek99r
+2025-09-23,20:00,Night,Rampura,Murder,,23.7507976,90.42442529,https://www.prothomalo.com/bangladesh/capital/rrk3roub5j
+2025-09-13,21:00,Night,Nazim Uddin Road,Rape,,23.72446575,90.40531849,https://www.prothomalo.com/bangladesh/capital/tk85ag2o2z
+2025-09-12,10:00,Morning,Rayerbag,Murder,Female,23.69747767,90.45786213,https://www.prothomalo.com/bangladesh/crime/6uy8ohshu6
+2025-08-16,9:00,Morning,Mohakhali,Murder,,23.77091583,90.40421288,https://www.prothomalo.com/bangladesh/capital/ntvn7w0jir
+2025-08-10,2:00,Night,Diabari,Murder,Female,23.79179474,90.34291062,https://www.prothomalo.com/bangladesh/crime/avmhf58y25
+2025-07-14,20:00,Night,Mohakhali,Rape,Female,23.77640233,90.40574687,https://www.prothomalo.com/bangladesh/crime/86a615jshx
+2025-07-14,3:00,Night,Wari,Accident,,23.72269595,90.4140921,https://www.prothomalo.com/bangladesh/capital/718oxk8q77
+2025-07-10,1:00,Night,Siddheswari,Murder,,23.74982194,90.41123162,https://www.prothomalo.com/bangladesh/capital/oszgfffl4t
+2025-07-02,6:00,Morning,Armanitola,Murder,,23.71552361,90.39744068,https://www.prothomalo.com/bangladesh/capital/iq3jebznh0
+2025-06-22,22:00,Night,Mirpur 12,Murder,,23.82229918,90.35685065,https://www.prothomalo.com/bangladesh/crime/tuwcr10utc
+2025-05-30,20:00,Night,Jatrabari,Accident,Female,23.7093544,90.43204323,https://www.prothomalo.com/bangladesh/capital/gn3ay4fc0r
+2025-05-27,21:00,Night,Newmarket,Rape,Female,23.73395368,90.38536773,https://www.prothomalo.com/bangladesh/capital/w9v4wohmw3
+2025-05-17,18:00,Evening,Zigatola,Murder,,23.73888561,90.37584446,https://www.prothomalo.com/bangladesh/capital/kgtgm20qfg
+2025-05-10,20:00,Night,Shewrapara,Murder,Female,23.79039983,90.37538534,https://www.prothomalo.com/bangladesh/crime/2e0zj6fyd3
+2025-05-08,22:00,Night,Green Road,Murder,,23.74500385,90.39083511,https://www.prothomalo.com/bangladesh/crime/2qnd441zjp
+2025-03-21,6:00,Morning,Kalshi,Murder,,23.82125037,90.38333956,https://www.prothomalo.com/bangladesh/crime/11t7q3wu8f
+2025-03-18,22:00,Night,Gulshan,Rape,Female,23.82976767,90.41991072,https://www.prothomalo.com/bangladesh/crime/w64s3fu175
+2025-03-16,23:00,Night,Diabari,Murder,,23.80513694,90.34897677,https://www.prothomalo.com/bangladesh/crime/sss74acive
+2025-03-08,1:00,Night,Kadamtali,Rape,Female,23.69558716,90.40364439,https://www.prothomalo.com/bangladesh/crime/nbxapvsjlw
+2025-01-14,23:00,Night,Shahbag,Rape,Female,23.73954076,90.39606894,https://www.prothomalo.com/bangladesh/crime/kcjo5j7gqa
+2024-12-18,20:30,Night,Rampura,Murder,Female,23.76693117,90.42876458,https://www.prothomalo.com/bangladesh/capital/otwslshmtd
+2024-12-07,10:30,Morning,Kalshi,Rape,Female,23.83092893,90.37618173,https://www.prothomalo.com/bangladesh/capital/bqzmtp2lh8
+2024-12-05,11:15,Morning,Diabari,Murder,Female,23.80548019,90.34872386,https://www.prothomalo.com/bangladesh/capital/jygygwvkn7
+2024-12-02,22:00,Night,Diabari,Murder,Female,23.79746889,90.35163224,https://www.prothomalo.com/bangladesh/capital/jygygwvkn7
+2024-11-27,10:00,Morning,Sabujbagh,Murder,Female,23.7303928,90.45452189,https://www.prothomalo.com/bangladesh/capital/wocoju1kky
+2024-11-21,10:30,Morning,Uttara,Acid,Female,23.89053198,90.38267326,https://www.prothomalo.com/bangladesh/capital/5dmovbv9rh
+2024-11-14,14:30,Noon,Dhanmondi,Stab,Female,23.75039972,90.36965911,https://www.prothomalo.com/bangladesh/capital/07kq0pkmsa
+2024-11-10,10:00,Morning,Uttara,Stab,Female,23.87429596,90.37144502,https://www.prothomalo.com/bangladesh/crime/rjecmm1c0b
+2024-11-01,6:00,Morning,Jatrabari,Murder,,23.71475301,90.4287983,https://www.prothomalo.com/bangladesh/capital/ndjymqqgk2
+2024-10-28,20:15,Night,Sayedabad,Murder,Female,23.78263037,90.43329557,https://www.prothomalo.com/bangladesh/crime/wjjmwykcfe
+2024-10-26,10:00,Morning,Sayedabad,Rape,Female,23.80427382,90.42437318,https://www.prothomalo.com/bangladesh/capital/jccnv3adlf
+2024-10-20,10:00,Morning,Mohammadpur,Robbery,,23.76275339,90.35689393,https://www.prothomalo.com/bangladesh/capital/ur1vi20bx1
+2024-10-15,15:30,Noon,Demra,Murder,Female,23.73572741,90.48797987,https://www.prothomalo.com/bangladesh/capital/3u2vezp4zj
+2024-09-24,4:30,Night,Bhasantek,Murder,,23.83012347,90.41770108,https://www.prothomalo.com/bangladesh/capital/0de2jgyzfa
+2024-08-07,23:00,Night,Hatirjheel,Murder,Female,23.7609827,90.40906601,https://www.prothomalo.com/bangladesh/capital/es33j5g1gf
+2024-06-28,18:00,Evening,Dakshinkhan,Rape,Female,23.83701404,90.423444,https://www.prothomalo.com/bangladesh/crime/pv1uvb3hsn
+2024-06-21,18:00,Evening,Matuail,Murder,Female,23.71105319,90.46566211,https://www.prothomalo.com/bangladesh/capital/noxc8amrc9
+2024-05-27,12:00,Noon,Gulshan,Murder,,23.80406317,90.41526367,https://www.prothomalo.com/bangladesh/crime/gerctbix93
+2024-05-26,12:00,Noon,Motijheel,Murder,,23.73065675,90.42152742,https://www.prothomalo.com/bangladesh/capital/p6j808f3tl
+2024-05-24,2:30,Night,Mohakhali,Murder,,23.77156561,90.39205822,https://www.prothomalo.com/bangladesh/capital/o6qch9uty1
+2024-05-21,14:30,Noon,300 Feet,Murder,Female,23.86055257,90.49840718,https://www.prothomalo.com/bangladesh/capital/35kh6pqfnq
+2024-05-02,12:30,Noon,Kamalapur,Body Found,,23.74299272,90.43081071,https://www.prothomalo.com/bangladesh/capital/n09gg8stnj
+2024-04-22,13:30,Noon,Adabor,Body Found,Female,23.77212349,90.34573984,https://www.prothomalo.com/bangladesh/capital/pwm8cds8ww
+2024-04-20,10:00,Morning,Hatirjheel,Body Found,,23.76997362,90.41436743,https://www.prothomalo.com/bangladesh/capital/4yq6adgw0z
+2024-04-14,10:00,Morning,Rampura,Body Found,,23.76844559,90.42220776,https://www.prothomalo.com/bangladesh/capital/4wa5fwod5d
+2024-03-23,22:00,Night,Bhasantek,Murder,Female,23.82487413,90.39343918,https://www.prothomalo.com/bangladesh/crime/dpmlqw5czr
+2024-03-20,9:30,Morning,Lalmatia,Murder,Female,23.75590369,90.36422167,https://www.prothomalo.com/bangladesh/crime/kki5dynfsi
+2024-03-10,8:00,Morning,Diabari,Murder,,23.80531322,90.34893352,https://www.prothomalo.com/bangladesh/capital/df0zpswvz1
+2024-03-10,5:30,Night,Demra,Murder,,23.73306185,90.48263575,https://www.prothomalo.com/bangladesh/crime/dqps9u4pic
+2024-03-08,18:30,Evening,Jatrabari,Murder,,23.70358967,90.4407891,https://www.prothomalo.com/bangladesh/capital/7boz6a8w1f
+2024-03-07,22:00,Night,Kamalapur,Murder,,23.73264327,90.43168125,https://www.prothomalo.com/bangladesh/crime/huaujfcshq
+2024-02-26,12:30,Noon,Hazaribagh,Murder,Female,23.73471991,90.36025108,https://www.prothomalo.com/bangladesh/capital/cik9r8ymkn
+2024-12-11,13:30,Noon,Wari,Acid,Female,23.71318953,90.40859473,https://www.prothomalo.com/bangladesh/crime/5hho4i0a4s
+2024-01-24,10:30,Morning,Motijheel,Body Found,,23.72747608,90.4121512,https://www.prothomalo.com/bangladesh/capital/u8nd1oar6s
+2024-01-10,10:00,Morning,Lalmatia,Murder,Female,23.75699462,90.36767541,https://www.prothomalo.com/bangladesh/capital/hinqy8mtck
+2023-12-16,15:30,Noon,Sayedabad,Murder,,23.78300288,90.42959589,https://www.prothomalo.com/bangladesh/capital/f5za8ix04y
+2023-12-02,5:30,Night,Green Road,Murder,Female,23.74346822,90.38812358,https://www.prothomalo.com/bangladesh/capital/750juzbesy
+2023-12-02,5:00,Night,Shahbag,Murder,Female,23.74183581,90.3922233,https://www.prothomalo.com/bangladesh/capital/750juzbesy
+2023-11-27,1:30,Night,Rayerbag,Stab,,23.69820554,90.45724626,https://www.prothomalo.com/bangladesh/capital/if7wk6jtno
+2023-11-26,1:30,Night,Rayerbag,Stab,,23.69904932,90.45240812,https://www.prothomalo.com/bangladesh/capital/if7wk6jtno
+2023-11-25,22:30,Night,Siddheswari,Murder,,23.75151221,90.41393428,https://www.prothomalo.com/bangladesh/capital/637izska03
+2023-11-24,10:00,Morning,Jatrabari,Body Found,Female,23.71068505,90.4351491,https://www.prothomalo.com/bangladesh/capital/4gakvldh0q
+2023-11-18,10:00,Morning,Dhaka Central Shaheed Minar,Body Found,,23.72585277,90.39719968,https://www.prothomalo.com/bangladesh/capital/56r1si1y2m
+2023-11-14,16:30,Afternoon,Khilgaon,Body Found,,23.76009686,90.46311544,https://www.prothomalo.com/bangladesh/capital/4lehaqatg5
+2023-10-18,10:00,Morning,Wari,Rape,Female,23.70850716,90.41132695,https://www.prothomalo.com/bangladesh/crime/w3gs0tzxp5
+2023-10-15,11:00,Morning,Green Road,Murder,Female,23.75380485,90.38568828,https://www.prothomalo.com/bangladesh/capital/rsxsiwo90v
+2023-10-14,22:30,Night,Adabor,Murder,,23.77830338,90.35506484,https://www.prothomalo.com/bangladesh/crime/v8avmcmh6f
+2023-10-10,20:00,Night,Diabari,Body Found,,23.80110651,90.34337607,https://www.prothomalo.com/bangladesh/crime/ak3ncz67dx
+2023-10-08,20:00,Night,Siddheswari,Murder,Female,23.7518973,90.40156258,https://www.prothomalo.com/bangladesh/capital/3wjfcexskx
+2023-09-18,16:00,Afternoon,Dhaka Central Shaheed Minar,Body Found,Female,23.72267633,90.3923431,https://www.prothomalo.com/bangladesh/capital/m3zmxhp3sl
+2023-08-17,20:30,Night,Siddheswari,Kidnap,Female,23.74292406,90.40743417,https://www.prothomalo.com/bangladesh/capital/tovvqb8yiu
+2023-08-15,14:30,Noon,Kamrangirchar,Murder,Female,23.71227525,90.37187172,https://www.prothomalo.com/bangladesh/capital/po1k8ga7rj
+2023-08-10,14:30,Noon,Bosila,Stab,,23.75472521,90.35931614,https://www.prothomalo.com/bangladesh/capital/24jbvboabq
+2023-08-02,16:30,Afternoon,Mohammadpur,Stab,,23.76760108,90.35729896,https://www.prothomalo.com/bangladesh/capital/24jbvboabq
+2023-07-29,23:00,Night,Motijheel,Murder,,23.73909581,90.41472675,https://www.prothomalo.com/bangladesh/crime/g0jjodkhkd
+2023-07-18,1:30,Night,Jatrabari,Stab,,23.70726481,90.43450041,https://www.prothomalo.com/bangladesh/capital/iihtg58e51
+2023-07-12,16:00,Afternoon,Newmarket,Body Found,Female,23.73911149,90.38352138,https://www.prothomalo.com/bangladesh/capital/77de2y0ef4
+2023-07-01,22:00,Night,Kamalapur,Rape,Female,23.72758428,90.43256206,https://www.prothomalo.com/bangladesh/capital/3ymaqmm5rq
+2023-07-01,4:00,Night,Green Road,Murder,,23.75681858,90.38739258,https://www.prothomalo.com/bangladesh/crime/wovwy3mphc
+2023-06-30,10:00,Morning,Hazaribagh,Body Found,,23.73499847,90.35576964,https://www.prothomalo.com/bangladesh/capital/zc5fv0s4zp
+2023-06-13,10:00,Morning,Armanitola,Body Found,,23.70899308,90.40074573,https://www.prothomalo.com/bangladesh/capital/nlb7pe8xl3
+2023-06-03,20:30,Night,Rayerbag,Body Found,,23.68361104,90.45614986,https://www.prothomalo.com/bangladesh/crime/g0xftypq3l
+2023-06-03,15:00,Noon,Old Dhaka,Body Found,,23.72966309,90.38147926,https://www.prothomalo.com/bangladesh/capital/axcrigpcmw
+2023-06-03,8:30,Morning,Kalabagan,Body Found,,23.74601646,90.37781033,https://www.prothomalo.com/bangladesh/capital/zugbjtlkht
+2023-05-29,4:30,Night,Green Road,Stab,,23.74255009,90.3885237,https://www.prothomalo.com/bangladesh/capital/7tef341urg
+2023-05-23,14:30,Noon,Dhanmondi,Stab,,23.74404271,90.36338605,https://www.prothomalo.com/bangladesh/capital/k88rje0vwg
+2023-05-08,14:30,Noon,Kalabagan,Body Found,,23.74880453,90.37876004,https://www.prothomalo.com/bangladesh/capital/yrj855afjv
+2023-04-02,20:30,Night,Khilgaon,Stab,Female,23.76371397,90.44524567,https://www.prothomalo.com/bangladesh/capital/u4hinu48s1
+2023-04-02,11:00,Morning,Demra,Body Found,,23.73348773,90.48394257,https://www.prothomalo.com/bangladesh/capital/4gakvldh0q
+2023-03-22,16:30,Afternoon,Diabari,Stab,,23.79992894,90.35847531,https://www.prothomalo.com/bangladesh/capital/nf09ngon9q
+2023-03-23,19:00,Evening,Uttara,Stab,,23.87888196,90.38346804,https://www.prothomalo.com/bangladesh/capital/t6kpunvtjn
+2023-03-14,22:30,Night,Mohammadpur,Rape,,23.76251909,90.35910382,https://www.prothomalo.com/bangladesh/crime/5vmow8nd67
+2023-03-09,22:30,Night,Dhaka Central Shaheed Minar,Murder,,23.72906496,90.4034103,https://www.prothomalo.com/bangladesh/capital/iqoz4tg50x
+2023-03-09,10:30,Morning,Uttara,Robbery,,23.87464983,90.38860374,https://www.prothomalo.com/bangladesh/capital/6xr93pqdx7
+2023-03-01,11:00,Morning,Lalbagh,Harassment,Female,23.71425946,90.38243459,https://www.prothomalo.com/bangladesh/capital/dvq87dsl0m
+2023-02-11,18:30,Evening,Mirpur 11,Rape,Female,23.81337571,90.35593455,https://www.prothomalo.com/bangladesh/capital/06h7yw7y1f
+2023-01-30,13:30,Noon,Demra,Body Found,Female,23.71847496,90.50095238,https://www.prothomalo.com/bangladesh/capital/ymbbuc3m91
+2023-01-24,19:30,Evening,Siddheswari,Body Found,,23.75345688,90.40154316,https://www.prothomalo.com/bangladesh/capital/v9hv17rts9
+2023-01-22,23:00,Night,Jatrabari,Murder,,23.70937744,90.43761884,https://www.prothomalo.com/bangladesh/capital/372gr71jtu
+2023-01-09,21:30,Night,Hatirjheel,Body Found,,23.76180239,90.4003948,https://www.prothomalo.com/bangladesh/capital/3tmgugugsg
+2023-01-01,16:30,Afternoon,Diabari,Murder,Female,23.81211713,90.34822237,https://www.prothomalo.com/bangladesh/capital/0xa6c5ozwu
+2022-12-29,3:30,Night,Shewrapara,Murder,,23.78119246,90.36967662,https://www.prothomalo.com/bangladesh/capital/24jbvboabq
+2022-09-22,2:30,Night,Kalabagan,Body Found,,23.74784897,90.37837039,https://www.prothomalo.com/bangladesh/crime/357v3mncdu
+2022-09-11,19:30,Evening,Manik Mia Avenue,Rape,Female,23.75356652,90.37984199,https://www.prothomalo.com/bangladesh/crime/yalmwomc36
+2022-09-07,21:30,Night,Kamalapur,Rape,Female,23.7353556,90.42590843,https://www.prothomalo.com/bangladesh/crime/wk6pofp1qo
+2022-09-05,23:30,Night,Pallabi,Stab,,23.82890686,90.35209893,https://www.prothomalo.com/bangladesh/capital/zabc7zimo8
+2022-09-28,1:00,Night,Shahbag,Murder,,23.74248209,90.39265112,https://www.prothomalo.com/bangladesh/capital/akqb7sukja
+2022-09-03,17:00,Afternoon,Dhanmondi,Body Found,Female,23.74616192,90.36390216,https://www.prothomalo.com/bangladesh/capital/8kl1xjqlz3
+2022-09-03,3:00,Night,Sayedabad,Body Found,Female,23.79775719,90.42511404,https://www.prothomalo.com/bangladesh/capital/8kl1xjqlz3
+2022-09-02,11:30,Morning,Kamalapur,Murder,,23.74375726,90.42759571,https://www.prothomalo.com/bangladesh/3inczj3o59
+2022-09-04,14:30,Noon,Jatrabari,Murder,,23.7030174,90.43659424,https://www.prothomalo.com/bangladesh/capital/8eg8kj7vgk
+2022-09-02,1:00,Night,Wari,Stab,,23.72068727,90.42256404,https://www.prothomalo.com/bangladesh/capital/aa75q0x7l7
+2022-08-21,14:00,Noon,Rayerbag,Murder,,23.67755546,90.47837371,https://www.prothomalo.com/bangladesh/crime/j4i28to065
+2022-08-17,13:00,Noon,Rampura,Murder,,23.7483425,90.42370312,https://www.prothomalo.com/bangladesh/capital/8gcd4mtf3y
+2022-08-10,1:00,Night,Kalabagan,Body Found,Female,23.75274779,90.38279682,https://www.prothomalo.com/bangladesh/capital/h3s18dtyxk
+2022-12-04,22:30,Night,Hatirjheel,Murder,,23.77387082,90.427966,https://www.prothomalo.com/bangladesh/capital/8yx5ojd2ya
+2022-11-11,16:30,Afternoon,Khilgaon,Body Found,Female,23.75658248,90.46519501,https://www.prothomalo.com/bangladesh/capital/iq43bufi0g
+2022-11-01,20:30,Night,Lalmatia,Stab,,23.76042269,90.3729202,https://www.prothomalo.com/bangladesh/capital/hu6c1sve30
+2022-10-29,18:30,Evening,Sabujbagh,Murder,,23.72923659,90.44611895,https://www.prothomalo.com/bangladesh/capital/ge2e11e07n
+2025-08-02,23:00,Night,Ashulia,Rape,Female,24.00965433,90.33035392,https://www.jugantor.com/country-news/1053746
+2011-04-10,3:30,Night,Dakshinkhan,Murder,Female,23.85154766,90.41274179,https://www.prothomalo.com/bangladesh/crime/cogugqyk0m
+2020-01-05,3:30,Night,Banani,Rape,Female,23.79509864,90.39665901,https://www.jugantor.com/national/264416
+2026-03-12,13:00,Noon,Ashulia,Rape,Female,23.89606266,90.33029191,https://bdnews24.com/bangladesh/e399b5382390
+2026-03-08,11:00,Morning,Sayedabad,Rape,Female,23.80191377,90.42561645,https://www.prothomalo.com/bangladesh/crime/pzny3je90f
+2025-02-23,10:00,Morning,Sayedabad,Rape,Female,23.79680842,90.43223706,https://bdnews24.com/bangladesh/73621a7449ca
+2025-10-01,11:00,Morning,Kamalapur,Rape,Female,23.72902136,90.42406641,https://www.jugantor.com/capital/1012068
+2025-03-18,3:30,Night,Kamalapur,Rape,Female,23.72953597,90.42931988,https://www.jugantor.com/capital/931839
+2025-02-23,10:00,Morning,Kamalapur,Rape,Female,23.74667595,90.42828992,https://www.jugantor.com/capital/931839
+2025-03-19,18:30,Evening,Kamalapur,Rape,Female,23.72953597,90.42931988,https://www.jugantor.com/capital/931839
+2021-03-11,19:00,Evening,Pallabi,Rape,Female,23.82132889,90.34181187,https://www.jugantor.com/tp-lastpage/383695
+,,,300 Feet,,,,,
+2025-09-03,20:30,Night,Rampura,Rape,Female,23.75806981,90.42174633,
+2025-08-24,10:00,Morning,Sabujbagh,Rape,Female,23.74101465,90.45546863,
+2025-08-11,15:30,Noon,Green Road,Rape,Female,23.74988798,90.39869921,
+2026-01-11,16:00,Afternoon,Sabujbagh,Murder,Female,23.74847465,90.44091225,
+,,,300 Feet,,,,,
+2025-01-11,14:00,Noon,Ramna,Rape,Female,23.7361,90.4087,
+2025-01-12,11:00,Morning,Ramna,Rape,Female,23.7345,90.4063,
+2025-02-15,21:00,Night,Ramna,Rape,Female,23.7382,90.4091,
+2025-02-18,13:00,Noon,Ramna,Murder,Female,23.7339,90.4076,
+2025-02-21,19:00,Evening,Ramna,Rape,Female,23.7377,90.4058,
+2025-03-05,21:00,Night,Ramna,Rape,Female,23.7325,90.4089,
+2025-03-02,12:30,Noon,Ramna,Rape,Female,23.7392,90.4034,
+2025-04-07,18:00,Evening,Ramna,Murder,Female,23.7356,90.4041,
+2025-04-10,20:00,Night,Ramna,Rape,Female,23.7347,90.4068,
+2025-04-13,14:00,Noon,Ramna,Murder,Female,23.7362,90.4072,
+2025-05-14,9:00,Morning,Ramna,Rape,Female,23.7351,90.405,
+2025-05-17,22:00,Night,Ramna,Rape,Female,23.7333,90.4065,
+2025-06-20,13:00,Noon,Ramna,Rape,Female,23.737,90.4078,
+2025-07-23,11:00,Morning,Ramna,Rape,Female,23.7349,90.4082,
+2025-08-26,22:00,Night,Ramna,Rape,Female,23.7365,90.409,
+2025-09-29,13:00,Noon,Ramna,Murder,Female,23.7357,90.4061,
+2025-10-01,19:00,Evening,Ramna,Rape,Female,23.7385,90.4072,
+2025-11-04,23:00,Night,Ramna,Rape,Female,23.7373,90.4059,
+2025-12-07,13:00,Noon,Ramna,Rape,Female,23.7368,90.4084,
+2025-12-10,19:00,Evening,Ramna,Murder,Female,23.7346,90.4075,
+2025-01-13,13:00,Noon,Motijheel,Rape,Female,23.7352,90.4062,
+2025-01-16,19:00,Evening,Motijheel,Murder,Female,23.7338,90.414,
+2025-02-19,23:00,Night,Motijheel,Rape,Female,23.7341,90.4165,
+2025-02-22,13:00,Noon,Motijheel,Murder,Female,23.7325,90.4153,
+2025-03-25,8:00,Morning,Motijheel,Rape,Female,23.7332,90.4172,
+2025-04-28,22:00,Night,Motijheel,Rape,Female,23.7319,90.418,
+2025-05-01,12:00,Noon,Motijheel,Rape,Female,23.7328,90.4162,
+2025-07-04,18:00,Evening,Motijheel,Rape,Female,23.734,90.4151,
+2025-07-07,22:00,Night,Motijheel,Rape,Female,23.7315,90.4178,
+2025-01-10,13:00,Noon,Motijheel,Murder,Female,23.7334,90.4165,
+2025-02-13,7:00,Morning,Wari,Rape,Female,23.7322,90.4147,
+2025-03-16,22:00,Night,Wari,Rape,Female,23.7105,90.4131,
+2025-05-19,13:00,Noon,Wari,Rape,Female,23.7132,90.4157,
+2025-05-22,7:00,Morning,Wari,Murder,Female,23.7118,90.4126,
+2025-06-25,22:00,Night,Wari,Rape,Female,23.7129,90.414,
+2025-07-28,15:00,Noon,Wari,Murder,Female,23.7107,90.4139,
+2025-07-31,7:00,Morning,Wari,Rape,Female,23.7112,90.4128,
+2025-08-03,22:00,Night,Wari,Murder,Female,23.7135,90.4152,
+2025-08-06,13:00,Noon,Wari,Rape,Female,23.7121,90.4135,
+2025-11-09,19:00,Evening,Wari,Rape,Female,23.7119,90.4147,
+2025-01-12,13:00,Noon,Shahbag,Rape,Female,23.7371,90.3979,
+2025-02-15,19:00,Evening,Shahbag,Murder,Female,23.7384,90.3991,
+2025-03-18,22:00,Night,Shahbag,Rape,Female,23.7365,90.3987,
+2025-04-21,15:00,Noon,Shahbag,Murder,Female,23.7379,90.3965,
+2025-06-24,19:00,Evening,Shahbag,Rape,Female,23.7381,90.3982,
+2025-08-27,22:00,Night,Shahbag,Murder,Female,23.7368,90.3993,
+2025-08-30,13:00,Noon,Shahbag,Rape,Female,23.7372,90.3975,
+2025-09-02,7:00,Morning,Shahbag,Murder,Female,23.7385,90.3989,
+2025-09-05,22:00,Night,Shahbag,Rape,Female,23.7367,90.398,
+2025-11-08,13:00,Noon,Shahbag,Murder,Female,23.7374,90.3978,
+2025-02-11,7:00,Morning,Newmarket,Rape,Female,23.7312,90.3845,
+2025-02-14,12:00,Night,Newmarket,Rape,Female,23.7321,90.3862,
+2025-02-17,13:00,Noon,Newmarket,Rape,Female,23.7309,90.3857,
+2025-03-20,7:00,Morning,Newmarket,Rape,Female,23.7317,90.3849,
+2025-03-23,22:00,Night,Newmarket,Rape,Female,23.7325,90.3853,
+2025-03-26,13:00,Noon,Newmarket,Murder,Female,23.7313,90.386,
+2025-03-29,19:00,Evening,Newmarket,Rape,Female,23.7307,90.3859,
+2025-03-02,22:00,Night,Newmarket,Rape,Female,23.732,90.3855,
+2025-04-05,13:00,Noon,Newmarket,Rape,Female,23.7315,90.3848,
+2025-04-08,19:00,Evening,Newmarket,Murder,Female,23.7308,90.3861,
+2025-05-11,16:00,Night,Newmarket,Rape,Female,23.7319,90.3852,
+2025-05-14,14:00,Noon,Newmarket,Rape,Female,23.7323,90.3849,
+2025-10-17,19:00,Evening,Newmarket,Rape,Female,23.7316,90.3865,
+2025-10-20,15:00,Night,Newmarket,Murder,Female,23.7327,90.3858,
+2025-10-23,13:00,Noon,Newmarket,Rape,Female,23.731,90.3851,
+2025-10-26,7:00,Morning,Newmarket,Murder,Female,23.7322,90.386,
+2025-10-29,22:00,Night,Newmarket,Rape,Female,23.7314,90.3855,
+2025-11-01,13:00,Noon,Newmarket,Murder,Female,23.7325,90.3848,
+2025-01-04,18:00,Evening,Newmarket,Rape,Female,23.7319,90.3852,
+2025-09-07,22:00,Night,Newmarket,Murder,Female,23.7328,90.3856,
+2025-07-10,13:00,Noon,Newmarket,Rape,Female,23.732,90.3851,
+2025-11-13,11:00,Morning,Newmarket,Murder,Female,23.7315,90.386,
+2025-10-16,22:00,Night,Newmarket,Rape,Female,23.7323,90.3849,
+2025-10-19,13:00,Noon,Newmarket,Murder,Female,23.7318,90.3852,
+2025-11-22,19:00,Evening,Newmarket,Rape,Female,23.7321,90.3861,
+2025-11-25,22:00,Night,Newmarket,Murder,Female,23.7316,90.3855,
+2025-01-28,13:00,Noon,Newmarket,Rape,Female,23.7324,90.3848,
+2025-11-01,19:00,Evening,Newmarket,Murder,Female,23.7319,90.3852,
+2025-07-04,22:00,Night,Newmarket,Rape,Female,23.7325,90.3856,
+2025-07-07,12:00,Noon,Newmarket,Murder,Female,23.7317,90.3851,
+2025-12-10,19:00,Evening,Newmarket,Rape,Female,23.7322,90.386,
+2025-11-13,22:00,Night,Newmarket,Murder,Female,23.7314,90.3855,
+2025-12-16,15:00,Noon,Newmarket,Rape,Female,23.7323,90.3848,
+2025-12-19,19:00,Evening,Newmarket,Rape,Female,23.7318,90.3852,
+2025-08-22,22:00,Night,Newmarket,Rape,Female,23.7321,90.3856,
+2025-01-25,13:00,Noon,Newmarket,Murder,Female,23.7319,90.3851,
+2025-12-28,19:00,Evening,Newmarket,Rape,Female,23.7325,90.386,
+2025-12-31,15:00,Night,Newmarket,Murder,Female,23.7316,90.3855,
+2026-01-03,13:00,Noon,Newmarket,Rape,Female,23.7324,90.3848,
+2026-01-06,10:00,Morning,Newmarket,Murder,Female,23.7319,90.3852,
+2025-01-09,6:00,Morning,Newmarket,Rape,Female,23.7325,90.3856,
+2026-01-12,15:00,Noon,Newmarket,Rape,Female,23.7317,90.3851,
+2026-02-15,19:00,Evening,Newmarket,Rape,Female,23.7322,90.386,
+2025-01-18,22:00,Night,Newmarket,Murder,Female,23.7314,90.3855,
+2025-04-21,13:00,Noon,Newmarket,Rape,Female,23.7323,90.3848,
+2025-01-24,19:00,Evening,Newmarket,Rape,Female,23.7318,90.3852,
+2026-01-27,14:00,Night,Newmarket,Rape,Female,23.7321,90.3856,
+2026-01-30,15:00,Noon,Newmarket,Rape,Female,23.7319,90.3851,
+2025-09-02,7:00,Morning,Newmarket,Rape,Female,23.7325,90.386,
+2025-02-05,22:00,Night,Newmarket,Rape,Female,23.7316,90.3855,
+2025-02-08,13:00,Noon,Newmarket,Rape,Female,23.7324,90.3848,
+2025-07-11,7:00,Morning,Newmarket,Rape,Female,23.7319,90.3852,
+2025-07-14,22:00,Night,Newmarket,Rape,Female,23.7325,90.3856,
+2025-08-17,15:00,Noon,Newmarket,Murder,Female,23.7317,90.3851,
+2025-09-20,19:00,Evening,Newmarket,Rape,Female,23.7322,90.386,
+2025-02-23,21:00,Night,Newmarket,Rape,Female,23.7314,90.3855,
+2025-12-26,14:00,Noon,Newmarket,Rape,Female,23.7323,90.3848,

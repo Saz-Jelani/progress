@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhaka Route Finder Admin</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<style>
+html,body{height:100%}
+body{margin:0;font-family:Arial;overflow:hidden}
+.app{display:flex;width:100vw;height:100vh;overflow:hidden}
+.sidebar{
+    flex:0 0 30%;
+    width:30%;
+    min-width:320px;
+    height:100vh;
+    box-sizing:border-box;
+    overflow-y:auto;
+    padding:20px;background:#fff;
+    box-shadow:4px 0 12px rgba(0,0,0,.15);
+    z-index:1000;
+    position:relative;
+}
+#map{
+    flex:1 1 auto;
+    min-width:0;
+    height:100vh;
+    background:linear-gradient(180deg,#dfeaf7 0%,#eef5fb 100%);
+}
+.sidebar h3{text-align:center;color:#1a73e8}
+.leaflet-control-layers{
+    border:none !important;
+    border-radius:14px !important;
+    box-shadow:0 10px 24px rgba(15, 23, 42, 0.16) !important;
+    overflow:hidden;
+}
+.leaflet-bottom.leaflet-right .leaflet-control{
+    margin-right:12px !important;
+    margin-bottom:12px !important;
+}
+.leaflet-control-layers-toggle{
+    width:40px !important;
+    height:40px !important;
+}
+.leaflet-control-layers-expanded{
+    padding:12px 14px !important;
+    font-family:Arial, sans-serif;
+}
+.admin-back{display:inline-block;margin-bottom:12px;padding:8px 12px;border-radius:8px;background:#eef4ff;color:#1a73e8;font-weight:700;text-decoration:none}
+.admin-copy{margin:0 0 16px 0;color:#5f6368;font-size:13px;line-height:1.45}
+.input-box{position:relative;margin-bottom:12px}
+.input-box label{display:block;margin:0 0 6px 0;color:#1f2937;font-size:13px;font-weight:700}
+.input-box input,.input-box select,.input-box textarea{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:10px;box-sizing:border-box;font-size:14px;outline:none}
+.input-box textarea{min-height:110px;resize:vertical}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px 0}
+button{border:none;padding:12px 14px;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer}
+.btn-primary{background:#1a73e8;color:#fff}
+.btn-soft{background:#eef4ff;color:#1a73e8}
+.btn-danger{background:#fee2e2;color:#b91c1c}
+.btn-success{background:#dcfce7;color:#166534}
+.helper-box{padding:12px;border-radius:10px;background:#f8fbff;border:1px solid #dbe7ff;color:#475569;font-size:13px;line-height:1.5;margin:0 0 14px 0}
+.status-box{margin:0 0 12px 0;font-size:13px;line-height:1.4;min-height:20px}
+.section-title{margin:16px 0 8px 0;font-size:14px;font-weight:700;color:#111827}
+.area-list{display:flex;flex-direction:column;gap:8px;max-height:28vh;overflow:auto;padding-right:4px}
+.area-item{padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;transition:all .18s ease}
+.area-item:hover{border-color:#93c5fd;background:#f8fbff}
+.area-item.active{border-color:#1d4ed8;background:#eff6ff;color:#1e3a8a;font-weight:700}
+.vertex-handle{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#fff;
+    border:3px solid #1d4ed8;
+    box-shadow:0 2px 6px rgba(29,78,216,.25);
+}
+@media (max-width:900px){
+    .app{flex-direction:column}
+    .sidebar{width:100%;min-width:0;height:auto;max-height:45vh}
+    #map{height:55vh}
+}
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar">
+        <a class="admin-back" href="/">Back To Main Map</a>
+        <h3>Dhaka Route Finder</h3>
+        <p class="admin-copy">Admin mode theke thana location update kora jabe, ar map-e point diye notun area boundary draw kore save kora jabe. Main map automatically latest data use korbe.</p>
+
+        <div class="input-box">
+            <label for="thanaSelect">Select Thana</label>
+            <select id="thanaSelect"></select>
+        </div>
+
+        <div class="input-box">
+            <label for="thanaLat">Thana Latitude</label>
+            <input id="thanaLat" type="number" step="any">
+        </div>
+
+        <div class="input-box">
+            <label for="thanaLng">Thana Longitude</label>
+            <input id="thanaLng" type="number" step="any">
+        </div>
+
+        <div class="btn-row">
+            <button id="saveThanaLocation" class="btn-primary" type="button">Save Thana Location</button>
+            <button id="centerOnThana" class="btn-soft" type="button">Center On Thana</button>
+        </div>
+
+        <div class="input-box">
+            <label for="areaName">New Area Name</label>
+            <input id="areaName" type="text" placeholder="Example: New Banani Extension">
+        </div>
+
+        <div class="helper-box">
+            Map-e click korle boundary point add hobe. Existing area select korle tar point-gula drag kore edit korte parben. Marker-e double click korle oi point remove hobe.
+        </div>
+
+        <div class="btn-row">
+            <button id="undoPoint" class="btn-soft" type="button">Undo Last Point</button>
+            <button id="clearPoints" class="btn-danger" type="button">Clear Points</button>
+            <button id="saveArea" class="btn-success" type="button">Save New Area</button>
+            <button id="deleteArea" class="btn-danger" type="button">Delete Selected Area</button>
+        </div>
+
+        <div class="input-box">
+            <label for="pointPreview">Current Boundary Points</label>
+            <textarea id="pointPreview" readonly></textarea>
+        </div>
+
+        <div id="status" class="status-box"></div>
+        <div class="section-title">Current Areas</div>
+        <div class="area-list" id="areaList"></div>
+    </div>
+
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+const initialThanaGeoData = {{ thana_geo_data|tojson }};
+const initialPoliceStations = {{ police_stations|tojson }};
+
+let thanaGeoData = structuredClone(initialThanaGeoData);
+let policeStations = structuredClone(initialPoliceStations);
+let drawPoints = [];
+let previewLine = null;
+let previewPolygon = null;
+let activeAreaLayer = null;
+let thanaMarker = null;
+let vertexMarkers = [];
+let selectedAreaName = '';
+
+const thanaSelect = document.getElementById('thanaSelect');
+const thanaLat = document.getElementById('thanaLat');
+const thanaLng = document.getElementById('thanaLng');
+const areaName = document.getElementById('areaName');
+const pointPreview = document.getElementById('pointPreview');
+const statusEl = document.getElementById('status');
+const areaList = document.getElementById('areaList');
+const deleteAreaBtn = document.getElementById('deleteArea');
+
+const map = L.map('map',{
+    maxBounds:[[23.65,90.30],[23.90,90.55]],
+    minZoom:11
+}).setView([23.8103,90.4125],13);
+
+const streetLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+});
+
+const lightLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+});
+
+const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+});
+
+streetLayer.addTo(map);
+
+L.control.layers(
+    {
+        'Street View': streetLayer,
+        'Light View': lightLayer,
+        'Dark View': darkLayer
+    },
+    null,
+    { position: 'bottomright' }
+).addTo(map);
+
+function setStatus(message, color = '#5f6368'){
+    statusEl.textContent = message || '';
+    statusEl.style.color = color;
+}
+
+function getStation(thanaName){
+    return policeStations.find((item) => item.name === thanaName) || null;
+}
+
+function getThana(thanaName){
+    return thanaGeoData[thanaName] || { areas: [], center: { lat: null, lng: null } };
+}
+
+function refreshThanaOptions(){
+    thanaSelect.innerHTML = '';
+    policeStations.forEach((station) => {
+        const option = document.createElement('option');
+        option.value = station.name;
+        option.textContent = station.name;
+        thanaSelect.appendChild(option);
+    });
+}
+
+function renderExistingAreas(thanaName){
+    const payload = getThana(thanaName);
+    areaList.innerHTML = '';
+    (payload.areas || []).forEach((area) => {
+        const item = document.createElement('div');
+        item.className = 'area-item';
+        if(area.name === selectedAreaName){
+            item.classList.add('active');
+        }
+        item.textContent = area.name;
+        item.addEventListener('click', () => showAreaBoundary(area));
+        areaList.appendChild(item);
+    });
+}
+
+function showAreaBoundary(area){
+    if(activeAreaLayer){
+        map.removeLayer(activeAreaLayer);
+    }
+    activeAreaLayer = L.polygon(area.polygon, {
+        color: '#0f766e',
+        weight: 2,
+        dashArray: '2 8',
+        fillOpacity: 0.08
+    }).addTo(map).bindPopup(area.name);
+
+    const bounds = activeAreaLayer.getBounds();
+    if(bounds.isValid()){
+        map.fitBounds(bounds.pad(0.08));
+    }
+    loadAreaIntoEditor(area);
+}
+
+function renderThanaMarker(station){
+    if(thanaMarker){
+        map.removeLayer(thanaMarker);
+    }
+    if(!station) return;
+    thanaMarker = L.marker([station.lat, station.lng]).addTo(map)
+        .bindPopup(`${station.name}<br>${station.lat}, ${station.lng}`);
+}
+
+function fillThanaForm(thanaName){
+    const station = getStation(thanaName);
+    const payload = getThana(thanaName);
+    if(!station) return;
+
+    thanaLat.value = station.lat ?? '';
+    thanaLng.value = station.lng ?? '';
+    renderExistingAreas(thanaName);
+    renderThanaMarker(station);
+
+    const centerLat = station.lat ?? payload.center?.lat ?? 23.8103;
+    const centerLng = station.lng ?? payload.center?.lng ?? 90.4125;
+    map.setView([centerLat, centerLng], 14);
+}
+
+function getEditablePoints(points){
+    if(!Array.isArray(points)){
+        return [];
+    }
+    if(points.length > 1){
+        const first = points[0];
+        const last = points[points.length - 1];
+        if(Array.isArray(first) && Array.isArray(last) && first[0] === last[0] && first[1] === last[1]){
+            return points.slice(0, -1).map((point) => [Number(point[0]), Number(point[1])]);
+        }
+    }
+    return points.map((point) => [Number(point[0]), Number(point[1])]);
+}
+
+function updatePreviewText(){
+    pointPreview.value = drawPoints.map((point, index) => `${index + 1}. ${point[0]}, ${point[1]}`).join('\n');
+}
+
+function clearVertexMarkers(){
+    vertexMarkers.forEach((marker) => map.removeLayer(marker));
+    vertexMarkers = [];
+}
+
+function syncAreaNameUi(){
+    areaName.value = selectedAreaName;
+    areaName.readOnly = false;
+    areaName.placeholder = selectedAreaName ? 'Edit selected area name' : 'Example: New Banani Extension';
+    document.getElementById('saveArea').textContent = selectedAreaName ? 'Save Edited Area' : 'Save New Area';
+    deleteAreaBtn.disabled = !selectedAreaName;
+    deleteAreaBtn.style.opacity = selectedAreaName ? '1' : '.55';
+    deleteAreaBtn.style.cursor = selectedAreaName ? 'pointer' : 'not-allowed';
+}
+
+function renderVertexMarkers(){
+    clearVertexMarkers();
+    drawPoints.forEach((point, index) => {
+        const marker = L.marker(point, {
+            draggable: true,
+            icon: L.divIcon({
+                className: '',
+                html: '<div class="vertex-handle"></div>',
+                iconSize: [14, 14],
+                iconAnchor: [7, 7]
+            })
+        }).addTo(map);
+
+        marker.on('drag', (event) => {
+            const { lat, lng } = event.target.getLatLng();
+            drawPoints[index] = [Number(lat.toFixed(8)), Number(lng.toFixed(8))];
+            redrawDraftLayers(false);
+        });
+
+        marker.on('dblclick', () => {
+            if(drawPoints.length <= 3){
+                setStatus('Minimum 3 ta point lagbe polygon rakhte.', '#b91c1c');
+                return;
+            }
+            drawPoints.splice(index, 1);
+            redrawDraftLayers();
+        });
+
+        vertexMarkers.push(marker);
+    });
+}
+
+function redrawDraftLayers(refreshHandles = true){
+    if(activeAreaLayer){
+        map.removeLayer(activeAreaLayer);
+        activeAreaLayer = null;
+    }
+    if(previewLine){
+        map.removeLayer(previewLine);
+        previewLine = null;
+    }
+    if(previewPolygon){
+        map.removeLayer(previewPolygon);
+        previewPolygon = null;
+    }
+
+    if(drawPoints.length >= 2){
+        previewLine = L.polyline(drawPoints, { color: '#2563eb', weight: 2 }).addTo(map);
+    }
+    if(drawPoints.length >= 3){
+        previewPolygon = L.polygon(drawPoints, {
+            color: '#1d4ed8',
+            weight: 2,
+            dashArray: '3 6',
+            fillOpacity: 0.12
+        }).addTo(map);
+    }
+
+    if(refreshHandles){
+        renderVertexMarkers();
+    }
+    updatePreviewText();
+    renderExistingAreas(thanaSelect.value);
+}
+
+function clearDraft(){
+    selectedAreaName = '';
+    drawPoints = [];
+    syncAreaNameUi();
+    redrawDraftLayers();
+    setStatus('');
+}
+
+function loadAreaIntoEditor(area){
+    selectedAreaName = area.name;
+    drawPoints = getEditablePoints(area.polygon);
+    syncAreaNameUi();
+    redrawDraftLayers();
+}
+
+async function saveThanaLocation(){
+    const payload = {
+        thana_name: thanaSelect.value,
+        lat: Number(thanaLat.value),
+        lng: Number(thanaLng.value)
+    };
+
+    const response = await fetch('/admin/update-thana-location', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(!response.ok || !result.ok){
+        setStatus(result.error || 'Failed to update thana location.', '#b91c1c');
+        return;
+    }
+
+    policeStations = policeStations.map((station) => station.name === result.station.name ? result.station : station);
+    fillThanaForm(result.station.name);
+    setStatus(`${result.station.name} location saved.`, '#166534');
+}
+
+async function saveAreaBoundary(){
+    const originalAreaName = selectedAreaName;
+    if(drawPoints.length < 3){
+        setStatus('At least 3 points lagbe area boundary save korte.', '#b91c1c');
+        return;
+    }
+    if(!areaName.value.trim()){
+        setStatus('Area name lagbe.', '#b91c1c');
+        return;
+    }
+
+    const payload = {
+        thana_name: thanaSelect.value,
+        area_name: areaName.value.trim(),
+        original_area_name: originalAreaName || '',
+        polygon: drawPoints
+    };
+
+    const response = await fetch('/admin/add-area', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(!response.ok || !result.ok){
+        setStatus(result.error || 'Failed to save area boundary.', '#b91c1c');
+        return;
+    }
+
+    thanaGeoData[thanaSelect.value] = result.thana;
+    selectedAreaName = payload.area_name;
+    renderExistingAreas(thanaSelect.value);
+    setStatus(
+        originalAreaName
+            ? `${originalAreaName} updated as ${payload.area_name} under ${payload.thana_name}.`
+            : `${payload.area_name} saved under ${payload.thana_name}.`,
+        '#166534'
+    );
+    const savedArea = (result.thana.areas || []).find((area) => area.name === payload.area_name);
+    if(savedArea){
+        showAreaBoundary(savedArea);
+        return;
+    }
+    clearDraft();
+}
+
+async function deleteSelectedArea(){
+    if(!selectedAreaName){
+        setStatus('Delete korar jonno age ekta area select korun.', '#b91c1c');
+        return;
+    }
+
+    const areaToDelete = selectedAreaName;
+    if(!window.confirm(`${areaToDelete} delete korte chan?`)){
+        return;
+    }
+
+    const response = await fetch('/admin/delete-area', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            thana_name: thanaSelect.value,
+            area_name: areaToDelete
+        })
+    });
+    const result = await response.json();
+    if(!response.ok || !result.ok){
+        setStatus(result.error || 'Failed to delete area.', '#b91c1c');
+        return;
+    }
+
+    thanaGeoData[thanaSelect.value] = result.thana;
+    clearDraft();
+    renderExistingAreas(thanaSelect.value);
+    setStatus(`${areaToDelete} deleted from ${thanaSelect.value}.`, '#166534');
+}
+
+map.on('click', (event) => {
+    const point = [Number(event.latlng.lat.toFixed(8)), Number(event.latlng.lng.toFixed(8))];
+    drawPoints.push(point);
+    if(selectedAreaName){
+        setStatus('Edited area te notun point add holo. Save korle boundary update hobe.', '#1d4ed8');
+    }
+    redrawDraftLayers();
+});
+
+document.getElementById('saveThanaLocation').addEventListener('click', saveThanaLocation);
+document.getElementById('centerOnThana').addEventListener('click', () => fillThanaForm(thanaSelect.value));
+document.getElementById('undoPoint').addEventListener('click', () => {
+    drawPoints.pop();
+    redrawDraftLayers();
+});
+document.getElementById('clearPoints').addEventListener('click', clearDraft);
+document.getElementById('saveArea').addEventListener('click', saveAreaBoundary);
+document.getElementById('deleteArea').addEventListener('click', deleteSelectedArea);
+thanaSelect.addEventListener('change', () => {
+    clearDraft();
+    setStatus('');
+    fillThanaForm(thanaSelect.value);
+});
+
+refreshThanaOptions();
+syncAreaNameUi();
+fillThanaForm(policeStations[0]?.name || '');
+</script>
+</body>
+</html>

@@ -37,6 +37,10 @@ body{margin:0;font-family:Arial;overflow:hidden}
     box-shadow:0 10px 24px rgba(15, 23, 42, 0.16) !important;
     overflow:hidden;
 }
+.leaflet-bottom.leaflet-right .leaflet-control{
+    margin-right:12px !important;
+    margin-bottom:12px !important;
+}
 .leaflet-control-layers-toggle{
     width:40px !important;
     height:40px !important;
@@ -47,38 +51,181 @@ body{margin:0;font-family:Arial;overflow:hidden}
 }
 .route-info-panel{
     position:fixed;
-    top:82px;
+    top:15px;
     right:16px;
-    width:min(360px, calc(100vw - 32px));
-    max-height:calc(100vh - 120px);
-    overflow:auto;
+    width:min(300px, calc(100vw - 32px));
+    max-height:calc(72vh - 170px);
+    overflow-y:auto;
+    overflow-x:hidden;
     background:#fff;
     border-radius:16px;
     box-shadow:0 16px 40px rgba(15,23,42,.22);
-    padding:18px;
+    padding:14px;
     z-index:2500;
     display:none;
 }
 .route-info-panel.active{display:block}
+.quick-nav-box{
+    position:fixed;
+    top:14px;
+    left:calc(32% + 28px);
+    width:min(570px, calc(100vw - 420px));
+    background:rgba(255,255,255,.97);
+    border:2px solid #f4c430;
+    border-radius:22px;
+    box-shadow:0 18px 34px rgba(15,23,42,.16);
+    padding:10px 12px 12px 12px;
+    z-index:2600;
+    backdrop-filter:blur(8px);
+}
+.quick-nav-title{
+    margin:0 0 8px 2px;
+    font-size:13px;
+    font-weight:800;
+    color:#1a3d7c;
+    line-height:1.2;
+    letter-spacing:.2px;
+}
+.quick-nav-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:4px 2px;
+}
+.quick-nav-select-wrap{
+    flex:1 1 auto;
+    position:relative;
+}
+.quick-nav-select{
+    width:100%;
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    padding:11px 42px 11px 14px;
+    border-radius:16px;
+    background:linear-gradient(180deg,#f9fbff 0%, #f2f7ff 100%);
+    border:1px solid #dbe7ff;
+    font-size:14px;
+    font-weight:700;
+    color:#1a3d7c;
+    line-height:1.2;
+    outline:none;
+    cursor:pointer;
+}
+.quick-nav-select.placeholder{
+    color:transparent;
+}
+.quick-nav-select option{
+    color:#1a1a1a;
+    background:#fff;
+}
+.quick-nav-placeholder{
+    position:absolute;
+    left:14px;
+    right:38px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:14px;
+    font-weight:700;
+    color:#1a3d7c;
+    line-height:1.2;
+    pointer-events:none;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.quick-nav-placeholder .muted{
+    color:rgba(26,61,124,.45);
+    filter:blur(.35px);
+}
+.quick-nav-select-wrap.has-value .quick-nav-placeholder{
+    display:none;
+}
+.quick-nav-select-wrap::after{
+    content:'';
+    position:absolute;
+    right:16px;
+    top:50%;
+    width:10px;
+    height:10px;
+    border-right:2px solid #5f6368;
+    border-bottom:2px solid #5f6368;
+    transform:translateY(-65%) rotate(45deg);
+    pointer-events:none;
+}
+.quick-nav-trigger{
+    width:42px;
+    height:42px;
+    border:none;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 10px 18px rgba(15,23,42,.16);
+    transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.quick-nav-trigger:hover{
+    transform:translateY(-1px) scale(1.03);
+    box-shadow:0 12px 22px rgba(15,23,42,.18);
+    filter:brightness(1.02);
+}
+.quick-nav-trigger.police{
+    background:linear-gradient(135deg,#2f80ed 0%, #1a73e8 100%);
+}
+.quick-nav-trigger.hospital{
+    background:linear-gradient(135deg,#1fb76a 0%, #129a57 100%);
+}
+.quick-nav-trigger.neutral{
+    background:linear-gradient(135deg,#7b8794 0%, #5f6b7a 100%);
+}
+.quick-nav-trigger.active{
+    box-shadow:0 0 0 3px rgba(244,196,48,.45), 0 12px 22px rgba(15,23,42,.18);
+}
+.quick-nav-trigger svg{
+    width:20px;
+    height:20px;
+    fill:currentColor;
+}
+.quick-nav-trigger-text{
+    font-size:18px;
+    font-weight:800;
+    line-height:1;
+    color:#fff;
+}
+.quick-nav-trigger-icon{
+    width:20px;
+    height:20px;
+    fill:#fff;
+    display:block;
+}
+.quick-nav-status{
+    margin:8px 4px 0 4px;
+    font-size:12px;
+    line-height:1.2;
+    color:#5f6368;
+    min-height:16px;
+}
 .route-info-title{
-    font-size:28px;
+    font-size:18px;
     font-weight:800;
     color:#1a1a1a;
-    margin:0 0 10px 0;
+    margin:0 0 8px 0;
 }
 .route-info-meta{
-    font-size:16px;
+    font-size:18px;
     color:#444;
-    margin:0 0 12px 0;
+    margin:0 0 8px 0;
 }
 .route-info-badge{
     display:inline-block;
-    margin:0 0 12px 0;
-    padding:6px 10px;
+    margin:0 0 10px 0;
+    padding:5px 8px;
     border-radius:999px;
     background:#edf7ed;
     color:#166534;
-    font-size:13px;
+    font-size:21px;
     font-weight:700;
 }
 .route-info-badge.risky{
@@ -88,15 +235,15 @@ body{margin:0;font-family:Arial;overflow:hidden}
 .route-step-list{
     display:flex;
     flex-direction:column;
-    gap:10px;
+    gap:7px;
 }
 .route-step{
     display:flex;
     justify-content:space-between;
-    gap:12px;
-    font-size:14px;
+    gap:8px;
+    font-size:12px;
     color:#222;
-    line-height:1.45;
+    line-height:1.3;
 }
 .route-step-text{
     flex:1 1 auto;
@@ -105,6 +252,7 @@ body{margin:0;font-family:Arial;overflow:hidden}
     flex:0 0 auto;
     color:#5f6368;
     white-space:nowrap;
+    font-size:12px;
 }
 
 .sidebar h3{text-align:center;color:#1a73e8}
@@ -149,6 +297,37 @@ button{
     border:none;border-radius:8px;
     font-size:16px;font-weight:bold;
     cursor:pointer;
+}
+.route-option-btn{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+.route-option-btn.loading{
+    cursor:wait;
+}
+.route-option-progress{
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:0;
+    background:rgba(0,0,0,.22);
+    border-radius:8px;
+    display:none;
+}
+.route-option-btn.loading .route-option-progress{
+    display:block;
+}
+.route-option-label{
+    position:relative;
+    z-index:1;
+    letter-spacing:.4px;
+}
+.route-option-btn.loading .route-option-label{
+    text-transform:uppercase;
 }
 
 /* Tabs */
@@ -332,6 +511,26 @@ button{
     cursor:not-allowed;
     opacity:.75;
 }
+@media (max-width:1100px){
+    .quick-nav-box{
+        left:auto;
+        right:16px;
+        width:min(380px, calc(100vw - 32px));
+    }
+}
+@media (max-width:768px){
+    .quick-nav-box{
+        position:absolute;
+        top:12px;
+        left:12px;
+        right:12px;
+        width:auto;
+        padding:10px;
+    }
+    .quick-nav-actions{
+        gap:8px;
+    }
+}
 </style>
 </head>
 
@@ -392,10 +591,14 @@ button{
 
     <div id="tab-thana" class="tab-content" style="display:none">
         <h4 style="margin-top:0">Thana List</h4>
+        <div style="margin:0 0 10px 0">
+            <a href="/admin/thana" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:8px 12px;border-radius:8px;background:#eef4ff;color:#1a73e8;font-weight:700;text-decoration:none">Open Thana Admin</a>
+        </div>
         <div style="margin-bottom:10px;position:relative">
             <input id="thanaSearch" placeholder="Search Thana..." style="width:90%;padding:15px;border-radius:8px;border:1px solid #ddd;" />
             <div id="thanaSug" class="suggestions" style="top:48px;bottom:auto;display:none;max-height:200px;overflow:auto"></div>
         </div>
+        <div id="thanaCoverageStatus" style="margin:0 0 10px 0;font-size:13px;color:#5f6368;line-height:1.35"></div>
         <div id="thanaList" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow:auto;padding-right:6px"></div>
     </div>
 
@@ -414,6 +617,23 @@ button{
 </div>
 
 <div id="map"></div>
+<div id="quickNavBox" class="quick-nav-box">
+    <!-- <p class="quick-nav-title">Nearby Emergency Navigation</p> -->
+    <div class="quick-nav-actions">
+        <div class="quick-nav-select-wrap">
+            <select id="quickNavSelect" class="quick-nav-select" aria-label="Choose nearest emergency place">
+                <option value="" selected disabled hidden></option>
+                <option value="police">Find my nearest Police Station</option>
+                <option value="hospital">Find my nearest Hospital</option>
+            </select>
+            <span class="quick-nav-placeholder">Find my nearest <span class="muted">Thana/Hospital</span></span>
+        </div>
+        <button id="quickNavTrigger" type="button" class="quick-nav-trigger police" aria-label="Find nearest selected place">
+            <span id="quickNavTriggerText" class="quick-nav-trigger-text">T</span>
+        </button>
+    </div>
+    <div id="quickNavStatus" class="quick-nav-status">Tap any option to turn on your location and build the closest route.</div>
+</div>
 <div id="routeInfoPanel" class="route-info-panel"></div>
 </div>
 
@@ -453,7 +673,7 @@ L.control.layers(
         'Dark View': darkLayer
     },
     null,
-    { position: 'topright' }
+    { position: 'bottomright' }
 ).addTo(map);
 
 // explicit element references (avoid relying on browser global id variables)
@@ -463,6 +683,123 @@ const startSug = document.getElementById('startSug');
 const endSug = document.getElementById('endSug');
 const crimeDate = document.getElementById('crimeDate');
 const crimeTime = document.getElementById('crimeTime');
+const quickNavStatus = document.getElementById('quickNavStatus');
+const quickNavSelect = document.getElementById('quickNavSelect');
+const quickNavTrigger = document.getElementById('quickNavTrigger');
+const quickNavTriggerText = document.getElementById('quickNavTriggerText');
+const thanaCoverageStatus = document.getElementById('thanaCoverageStatus');
+
+function updateThanaCoverageStatus(message, color = '#5f6368'){
+    if(!thanaCoverageStatus) return;
+    thanaCoverageStatus.innerText = message || '';
+    thanaCoverageStatus.style.color = color;
+}
+
+function clearThanaCoverageLayer(){
+    if(thanaCoverageLayer){
+        map.removeLayer(thanaCoverageLayer);
+        thanaCoverageLayer = null;
+    }
+    if(activeThanaMarker){
+        map.removeLayer(activeThanaMarker);
+        activeThanaMarker = null;
+    }
+}
+
+function polygonStyle(index = 0){
+    const palette = ['#0f766e', '#2563eb', '#dc2626', '#ca8a04', '#7c3aed', '#0891b2'];
+    const color = palette[index % palette.length];
+    return {
+        color,
+        weight: 2,
+        opacity: 0.9,
+        fillColor: color,
+        fillOpacity: 0.05,
+        dashArray: '1 8',
+        lineCap: 'round'
+    };
+}
+
+function getThanaAreaData(thanaName){
+    return window.thanaGeoData?.[thanaName] || { areas: [], center: null };
+}
+
+function getStationByName(thanaName){
+    return window.policeStations.find((item) => item.name === thanaName) || null;
+}
+
+function createPoliceMarker(lat, lng){
+    const policeIcon = L.divIcon({
+        html: `<div style="text-align:center; margin-top: 10px;"><span style="font-size: 24px;">&#128110;</span></div>`
+    });
+    return L.marker([lat, lng], { icon: policeIcon });
+}
+
+function setActiveThanaCard(thanaName){
+    document.querySelectorAll('[data-thana-name]').forEach((card) => {
+        const isActive = card.dataset.thanaName === thanaName;
+        card.style.borderColor = isActive ? '#0f766e' : '#e5e7eb';
+        card.style.background = isActive ? '#f0fdfa' : '#fff';
+        const body = card.querySelector('[data-thana-body]');
+        const arrow = card.querySelector('[data-thana-arrow]');
+        if(body) body.style.display = isActive ? 'block' : 'none';
+        if(arrow) arrow.textContent = isActive ? 'Hide' : 'View';
+    });
+}
+
+function focusThanaCard(thanaName){
+    const escapedName = window.CSS?.escape ? CSS.escape(thanaName) : thanaName.replace(/"/g, '\\"');
+    const card = document.querySelector(`[data-thana-name="${escapedName}"]`);
+    if(card){
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
+function renderThanaCoverage(station, selectedAreaName = ''){
+    const thanaData = getThanaAreaData(station.name);
+    const allAreas = thanaData.areas || [];
+    const coverageItems = selectedAreaName
+        ? allAreas.filter((area) => area.name === selectedAreaName)
+        : allAreas;
+    const mapCenter = [
+        thanaData.center?.lat || station.lat,
+        thanaData.center?.lng || station.lng
+    ];
+
+    map.setView(mapCenter, 14, { animate: true });
+    clearThanaCoverageLayer();
+    thanaCoverageLayer = L.layerGroup().addTo(map);
+    activeThanaMarker = createPoliceMarker(station.lat, station.lng)
+        .addTo(thanaCoverageLayer)
+        .bindPopup(`<b>${station.name}</b><br>Phone: ${station.phone || 'N/A'}<br>Email: ${station.email || 'N/A'}`);
+
+    if(!coverageItems.length){
+        setActiveThanaCard(station.name);
+        activeThanaMarker.openPopup();
+        updateThanaCoverageStatus(`No saved area boundary found for ${station.name}.`, '#d93025');
+        return;
+    }
+
+    const layers = [];
+    coverageItems.forEach((entry, index) => {
+        const layer = L.polygon(entry.polygon, polygonStyle(index))
+            .bindPopup(`<b>${station.name}</b><br>${entry.name}`);
+        layer.addTo(thanaCoverageLayer);
+        layers.push(layer);
+    });
+
+    const bounds = L.featureGroup(layers).getBounds();
+    if(bounds.isValid()){
+        map.fitBounds(bounds.pad(0.08));
+    }
+
+    activeThanaMarker.openPopup();
+    const summary = selectedAreaName
+        ? `${station.name}: showing boundary for ${selectedAreaName}.`
+        : `${station.name}: showing all ${coverageItems.length} area boundaries.`;
+    updateThanaCoverageStatus(summary, '#166534');
+    setActiveThanaCard(station.name);
+}
 
 // Tabs and Thana list setup
 document.addEventListener('DOMContentLoaded', ()=>{
@@ -480,33 +817,59 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const listEl = document.getElementById('thanaList');
     if(listEl && window.policeStations){
         listEl.innerHTML = '';
-        window.policeStations.forEach((s, idx)=>{
+        window.policeStations.forEach((s)=>{
+            const thanaData = getThanaAreaData(s.name);
             const el = document.createElement('div');
-            el.style.display='flex';
-            el.style.justifyContent='space-between';
-            el.style.alignItems='center';
-            el.style.padding='8px';
-            el.style.border='1px solid #eee';
+            const areaOptions = (thanaData.areas || [])
+                .map((area) => `<option value="${area.name.replace(/"/g, '&quot;')}">${area.name}</option>`)
+                .join('');
+            el.style.padding='10px';
+            el.style.border='1px solid #e5e7eb';
             el.style.borderRadius='8px';
             el.style.cursor='pointer';
-            el.innerHTML = `<div style="font-weight:600">${s.name}</div><div style="font-size:12px;color:#666">View</div>`;
-            el.onclick = () => {
-                map.setView([s.lat, s.lng], 15, { animate: true });
-                L.popup()
-                    .setLatLng([s.lat, s.lng])
-                    .setContent(
-                        `<b>${s.name}</b><br>Phone: ${s.phone || 'N/A'}<br>Email: ${s.email || 'N/A'}`
-                    )
-                    .openOn(map);
-
-                // Add police icon outside the popup box
-                const policeIcon = L.divIcon({
-                    html: `<div style="text-align:left; margin-top: 10px;"><span style="font-size: 34px;">👮</span></div>`
-                });
-                L.marker([s.lat, s.lng], { icon: policeIcon }).addTo(map);
-            };
+            el.style.background='#fff';
+            el.style.transition='all 0.2s ease';
+            el.dataset.thanaName = s.name;
+            el.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <div>
+                        <div style="font-weight:700">${s.name}</div>
+                        <div style="font-size:12px;color:#6b7280;margin-top:3px">${thanaData.areas?.length || 0} area${(thanaData.areas?.length || 0) === 1 ? '' : 's'}</div>
+                    </div>
+                    <div data-thana-arrow style="font-size:12px;color:#0f766e;font-weight:600">View</div>
+                </div>
+                <div data-thana-body style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid #e5e7eb">
+                    <label style="display:block;font-size:12px;color:#4b5563;margin-bottom:6px">Select area</label>
+                    <select data-area-select style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #d1d5db;background:#fff">
+                        <option value="">All Areas</option>
+                        ${areaOptions}
+                    </select>
+                </div>
+            `;
             listEl.appendChild(el);
         });
+
+        listEl.addEventListener('click', (ev) => {
+            const select = ev.target.closest('[data-area-select]');
+            if(select){
+                const card = ev.target.closest('[data-thana-name]');
+                const station = getStationByName(card?.dataset.thanaName);
+                if(!station) return;
+                ev.stopPropagation();
+                renderThanaCoverage(station, select.value || '');
+                return;
+            }
+
+            const card = ev.target.closest('[data-thana-name]');
+            if(!card) return;
+            const station = getStationByName(card.dataset.thanaName);
+            if(!station) return;
+            ev.preventDefault();
+            ev.stopPropagation();
+            const dropdown = card.querySelector('[data-area-select]');
+            if(dropdown) dropdown.value = '';
+            renderThanaCoverage(station);
+        }, true);
     }
 
     // thana search + suggestions
@@ -530,23 +893,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             div.innerText = s.name;
             div.style.padding = '8px';
             div.style.cursor = 'pointer';
-            div.onclick = () => {
-                thanaSearch.value = s.name;
-                thanaSug.style.display = 'none';
-                map.setView([s.lat, s.lng], 15, { animate: true });
-                L.popup()
-                    .setLatLng([s.lat, s.lng])
-                    .setContent(
-                        `<b>${s.name}</b><br>Phone: ${s.phone || 'N/A'}<br>Email: ${s.email || 'N/A'}`
-                    )
-                    .openOn(map);
-
-                // Add police icon outside the popup box
-                const policeIcon = L.divIcon({
-                    html: `<div style="text-align:center; margin-top: 10px;"><span style="font-size: 24px;">👮</span></div>`
-                });
-                L.marker([s.lat, s.lng], { icon: policeIcon }).addTo(map);
-            };
+            div.dataset.thanaName = s.name;
             thanaSug.appendChild(div);
         });
         thanaSug.style.display = matches.length ? 'block' : 'none';
@@ -554,14 +901,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     if(thanaSearch){
         thanaSearch.addEventListener('input', debounce(()=>updateThanaSuggestions(thanaSearch.value), 180));
+        thanaSug.addEventListener('click', (ev) => {
+            const option = ev.target.closest('[data-thana-name]');
+            if(!option) return;
+            const station = window.policeStations.find((item) => item.name === option.dataset.thanaName);
+            if(!station) return;
+            thanaSearch.value = station.name;
+            thanaSug.style.display = 'none';
+            ev.preventDefault();
+            ev.stopPropagation();
+            focusThanaCard(station.name);
+            renderThanaCoverage(station);
+        }, true);
         thanaSearch.addEventListener('keydown', (ev) => {
             if (ev.key === 'Enter') {
-                const q = thanaSearch.value.toLowerCase();
-                const index = window.policeStations.findIndex(s => s.name.toLowerCase() === q);
-                if (index !== -1) {
-                    const [selected] = window.policeStations.splice(index, 1);
-                    window.policeStations.unshift(selected);
+                const selected = window.policeStations.find(s => s.name.toLowerCase() === thanaSearch.value.toLowerCase());
+                if (selected) {
                     updateThanaSuggestions(thanaSearch.value);
+                    focusThanaCard(selected.name);
+                    renderThanaCoverage(selected);
                 }
             }
         });
@@ -574,6 +932,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 /* ================= HOTSPOTS ================= */
 window.hotspots = [];
+window.predictedHotspots = [];
 
 function loadHotspots(){
     let d = crimeDate.value;
@@ -600,11 +959,12 @@ function loadHotspots(){
         data.forEach(h=>{
             let clr = getColor(h.weight);
 
-            L.circle([h.lat,h.lng],{
-                radius:200,
+            L.circleMarker([h.lat,h.lng],{
+                radius:7,
                 color: clr,
                 fillColor: clr,
-                fillOpacity:0.9,
+                fillOpacity:0.66,
+                weight:1.5,
             }).addTo(window.hotspotLayer)
             .bindPopup(`
 <b>Crime:</b> ${h.crime}<br>
@@ -613,10 +973,14 @@ function loadHotspots(){
 `);
         });
     });
+
+    loadPredictedHotspots();
 }
 
 crimeDate.onchange = loadHotspots;
 crimeTime.onchange = loadHotspots;
+initializeCrimeDateTimeInputs();
+loadHotspots();
 
 /* ================= SEARCH ================= */
 function debounce(fn,delay=300){
@@ -659,8 +1023,67 @@ function prependMyLocationOption(box){
     box.appendChild(myLocationOption);
 }
 
+function normalizeSuggestionText(value){
+    return (value || '')
+        .toLowerCase()
+        .replace(/dhaka|bangladesh/g, ' ')
+        .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function formatSuggestionLabel(properties = {}){
+    const parts = [
+        properties.name,
+        properties.street,
+        properties.suburb,
+        properties.district,
+        properties.city || 'Dhaka'
+    ]
+        .filter(Boolean)
+        .map((part) => String(part).trim())
+        .filter((part, index, arr) => arr.indexOf(part) === index);
+
+    if(!parts.length) return 'Dhaka';
+    return parts.join(', ');
+}
+
+function rankDhakaSuggestions(features, query){
+    const normalizedQuery = normalizeSuggestionText(query);
+    const queryWords = normalizedQuery.split(' ').filter(Boolean);
+
+    return [...features]
+        .map((feature) => {
+            const props = feature.properties || {};
+            const label = formatSuggestionLabel(props);
+            const haystack = normalizeSuggestionText([
+                props.name,
+                props.street,
+                props.suburb,
+                props.district,
+                props.city,
+                props.state
+            ].filter(Boolean).join(' '));
+
+            let score = 0;
+            if(props.city && props.city.toLowerCase().includes('dhaka')) score += 120;
+            if(props.state && props.state.toLowerCase().includes('dhaka')) score += 30;
+            if(haystack.startsWith(normalizedQuery)) score += 140;
+            if(label.toLowerCase().startsWith(query.toLowerCase())) score += 100;
+            if(haystack.includes(normalizedQuery)) score += 70;
+            score += queryWords.filter((word) => haystack.includes(word)).length * 20;
+            if(props.name) score += 12;
+            if(props.street) score += 8;
+
+            return { feature, label, score };
+        })
+        .sort((a, b) => b.score - a.score || a.label.length - b.label.length)
+        .filter((item, index, arr) => arr.findIndex((other) => other.label === item.label) === index);
+}
+
 async function searchPlace(q,box){
-    if(q.length<2){
+    const trimmedQuery = q.trim();
+    if(trimmedQuery.length < 1){
         if(box === startSug){
             box.innerHTML = "";
             prependMyLocationOption(box);
@@ -670,22 +1093,42 @@ async function searchPlace(q,box){
         }
         return;
     }
-    const r = await fetch(`https://photon.komoot.io/api/?q=${q}&lat=23.81&lon=90.41&limit=6`);
-    const d = await r.json();
-    box.innerHTML="";
-    prependMyLocationOption(box);
-    d.features.forEach(p=>{
-        let div=document.createElement("div");
-        div.innerText=(p.properties.name||"")+" "+(p.properties.city||"Dhaka");
-        div.onclick=()=>{
-            box.previousElementSibling.value=div.innerText;
-            box.dataset.lat=p.geometry.coordinates[1];
-            box.dataset.lng=p.geometry.coordinates[0];
-            box.style.display="none";
-        }
-        box.appendChild(div);
-    });
-    box.style.display="block";
+
+    const dhakaBounds = '90.30,23.68,90.53,23.90';
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(trimmedQuery)}&bbox=${dhakaBounds}&lat=23.8103&lon=90.4125&limit=15`;
+
+    try{
+        const r = await fetch(url);
+        const d = await r.json();
+        const rankedSuggestions = rankDhakaSuggestions(
+            (d.features || []).filter((feature) => {
+                const [lng, lat] = feature.geometry?.coordinates || [];
+                return Number.isFinite(lat) && Number.isFinite(lng)
+                    && lat >= 23.68 && lat <= 23.90
+                    && lng >= 90.30 && lng <= 90.53;
+            }),
+            trimmedQuery
+        );
+
+        box.innerHTML = "";
+        prependMyLocationOption(box);
+
+        rankedSuggestions.slice(0, 10).forEach(({ feature, label }) => {
+            const div = document.createElement("div");
+            div.innerText = label;
+            div.onclick = () => {
+                box.previousElementSibling.value = label;
+                box.dataset.lat = feature.geometry.coordinates[1];
+                box.dataset.lng = feature.geometry.coordinates[0];
+                box.style.display = "none";
+            };
+            box.appendChild(div);
+        });
+
+        box.style.display = box.children.length ? "block" : "none";
+    }catch(error){
+        box.style.display = "none";
+    }
 }
 
 start.oninput = debounce(()=>{
@@ -724,41 +1167,42 @@ let safetyAlertActive = false;
 let alertPinBuffer = '';
 let alertSoundInterval = null;
 let alertCountdownInterval = null;
-let alertCountdownRemaining = 0;
+let alertCountdownRemainingSeconds = 0;
 let rescueEmailSent = false;
-// police stations sample list (replace with real data or API as needed)
-window.policeStations = [
-    {name: "Kotwali Thana", lat: 23.707703986257986, lng: 90.40946942982121, phone: "0123456789", email: "kotwali@police.gov.bd"},
-    {name: "Ramna Thana", lat: 23.7410, lng: 90.4040, phone: "0123456789", email: "ramna@police.gov.bd"},
-    {name: "Gulshan Thana", lat: 23.7920, lng: 90.4120, phone: "0123456789", email: "gulshan@police.gov.bd"},
-    {name: "Mirpur Thana", lat: 23.8280, lng: 90.3570, phone: "0123456789", email: "mirpur@police.gov.bd"},
-    {name: "Badda Thana", lat: 23.7800, lng: 90.4250, phone: "0123456789", email: "badda@police.gov.bd"},
-    {name: "Dhanmondi Thana", lat: 23.7460, lng: 90.3740, phone: "0123456789", email: "dhanmondi@police.gov.bd"},
-    {name: "Mohammadpur Thana", lat: 23.7590, lng: 90.3660, phone: "0123456789", email: "mohammadpur@police.gov.bd"},
-    {name: "Motijheel Thana", lat: 23.7280, lng: 90.4110, phone: "0123456789", email: "motijheel@police.gov.bd"},
-    {name: "Paltan Thana", lat: 23.7350, lng: 90.4150, phone: "0123456789", email: "paltan@police.gov.bd"},
-    {name: "Tejgaon Thana", lat: 23.7680, lng: 90.4050, phone: "0123456789", email: "tejgaon@police.gov.bd"},
-    {name: "Keraniganj Thana", lat: 23.6960, lng: 90.3650, phone: "0123456789", email: "keraniganj@police.gov.bd"},
-    {name: "Kamrangirchar Thana", lat: 23.7290, lng: 90.4200, phone: "0123456789", email: "kamrangirchar@police.gov.bd"},
-    {name: "Hazaribagh Thana", lat: 23.7340, lng: 90.4040, phone: "0123456789", email: "hazaribagh@police.gov.bd"},
-    {name: "Shahbagh Thana", lat: 23.7360, lng: 90.3930, phone: "0123456789", email: "shahbagh@police.gov.bd"},
-    {name: "Lalbagh Thana", lat: 23.7160, lng: 90.3990, phone:"", email: "lalbagh@police.gov.bd"},
-    {name: "Khilgaon Thana", lat: 23.7420, lng: 90.4440, phone: "0123456789", email: "khilgaon@police.gov.bd"},
-    {name: "Khilkhet Thana", lat: 23.8680, lng: 90.4220, phone: "0123456789", email: "khilkhet@police.gov.bd"},
-    {name: "Uttara Thana", lat: 23.8750, lng: 90.3980, phone: "0123456789", email: "uttara@police.gov.bd"},
-    {name: "Airport Thana", lat: 23.8478, lng: 90.4106, phone: "0123456789", email: "airport@police.gov.bd"},
-    {name: "Malibagh Thana", lat: 23.7500, lng: 90.4180, phone: "0123456789", email: "malibagh@police.gov.bd"},
-    {name: "Kafrul Thana", lat: 23.8140, lng: 90.3550, phone:"0123456789", email:"kafrul@police.gov.bd"},
-    {name: "Shyampur Thana", lat: 23.7020, lng: 90.3980, phone:"0123456789", email:"shyampur@police.gov.bd"}
+window.policeStations = {{ police_stations|tojson }};
+window.thanaGeoData = {{ thana_geo_data|tojson }};
+window.thanaAreas = Object.fromEntries(
+    Object.entries(window.thanaGeoData || {}).map(([thanaName, payload]) => [
+        thanaName,
+        (payload.areas || []).map((area) => area.name)
+    ])
+);
+window.hospitals = [
+    {name: "Dhaka Medical College Hospital", lat: 23.7256, lng: 90.3980, phone: "02-55165088"},
+    {name: "Sir Salimullah Medical College Mitford Hospital", lat: 23.7104, lng: 90.4074, phone: "02-57315031"},
+    {name: "BSMMU", lat: 23.7394, lng: 90.3945, phone: "02-9661051"},
+    {name: "Square Hospital", lat: 23.7512, lng: 90.3839, phone: "10616"},
+    {name: "Holy Family Red Crescent Medical College Hospital", lat: 23.7517, lng: 90.3927, phone: "02-48117235"},
+    {name: "BIRDEM General Hospital", lat: 23.7381, lng: 90.3959, phone: "02-9661551"},
+    {name: "Mugda Medical College Hospital", lat: 23.7317, lng: 90.4535, phone: "02-7272255"},
+    {name: "Kurmitola General Hospital", lat: 23.8226, lng: 90.4007, phone: "02-55062350"},
+    {name: "Evercare Hospital Dhaka", lat: 23.8107, lng: 90.4318, phone: "10678"},
+    {name: "United Hospital", lat: 23.8044, lng: 90.4159, phone: "10666"}
 ];
 let stationLayer;
+let quickNavLayer = null;
+let thanaCoverageLayer = null;
+let activeThanaMarker = null;
+let predictedHotspotLayer = null;
+const thanaBoundaryCache = new Map();
 let mainRouteLayer = null;
 let altRouteLayer = null;
+let currentQuickNavType = '';
 window.currentPrimaryRouteCoords = [];
 window.currentRouteOptions = [];
 window.currentRouteContext = null;
 const routeInfoPanel = document.getElementById('routeInfoPanel');
-const OSRM_ROUTE_URL = 'https://router.project-osrm.org/route/v1/driving';
+const OSRM_ROUTE_ROOT = 'https://router.project-osrm.org/route/v1';
 
 function makeIcon(t){
     return L.divIcon({
@@ -780,12 +1224,21 @@ function clearAlternativeRouteLayer(){
     }
 }
 
+function clearQuickNavLayer(){
+    if(quickNavLayer){
+        map.removeLayer(quickNavLayer);
+        quickNavLayer = null;
+    }
+}
+
 function clearRenderedRoutes(){
     if(mainRouteLayer){
         map.removeLayer(mainRouteLayer);
         mainRouteLayer = null;
     }
     clearAlternativeRouteLayer();
+    clearQuickNavLayer();
+    clearThanaCoverageLayer();
 }
 
 function hideRouteInfo(){
@@ -799,6 +1252,113 @@ function clearRouteUi(){
     const routeHelp = document.getElementById('safeAlternativeWrap');
     if(routeHelp) routeHelp.remove();
     hideRouteInfo();
+}
+
+function initializeCrimeDateTimeInputs(){
+    const now = new Date();
+    if(crimeDate && !crimeDate.value){
+        crimeDate.value = now.toISOString().slice(0, 10);
+    }
+    if(crimeTime && !crimeTime.value){
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        crimeTime.value = `${hours}:${minutes}`;
+    }
+}
+
+function clearPredictedHotspots(){
+    if(predictedHotspotLayer){
+        map.removeLayer(predictedHotspotLayer);
+        predictedHotspotLayer = null;
+    }
+    window.predictedHotspots = [];
+}
+
+function predictionColor(level){
+    if(level === 'High') return '#b42318';
+    if(level === 'Medium') return '#f79009';
+    return '#1570ef';
+}
+
+function getPredictedHotspotMarkerSizes(index = 0){
+    const outerRadius = Math.max(125, 190 - (index * 14));
+    const innerRadius = Math.max(45, 70 - (index * 4));
+    return {
+        outerRadius,
+        innerRadius,
+        outerWeight: 3,
+        innerWeight: 4,
+    };
+}
+
+function renderPredictedHotspots(prediction){
+    clearPredictedHotspots();
+    const candidates = prediction?.hotspot_candidates || [];
+    if(!candidates.length) return;
+
+    window.predictedHotspots = candidates.map((candidate) => ({
+        lat: Number(candidate.lat),
+        lng: Number(candidate.lng),
+        risk_level: candidate.risk_level,
+        risk_percent: candidate.risk_percent,
+        place: candidate.place,
+        predicted: true,
+    }));
+
+    predictedHotspotLayer = L.layerGroup().addTo(map);
+    candidates.forEach((candidate, index) => {
+        const color = predictionColor(candidate.risk_level);
+        const size = getPredictedHotspotMarkerSizes(index);
+        L.circle([candidate.lat, candidate.lng], {
+            radius: size.outerRadius,
+            color,
+            fillColor: color,
+            fillOpacity: 0.14,
+            opacity: 0.5,
+            weight: size.outerWeight,
+        }).addTo(predictedHotspotLayer);
+
+        L.circle([candidate.lat, candidate.lng], {
+            radius: size.innerRadius,
+            color,
+            fillColor: color,
+            fillOpacity: 0.08,
+            weight: size.innerWeight,
+        }).addTo(predictedHotspotLayer).bindPopup(`
+<b>Predicted hotspot:</b> ${candidate.place}<br>
+<b>Risk:</b> ${candidate.risk_percent}% (${candidate.risk_level})<br>
+<b>Nearest area match:</b> ${candidate.nearest_place_distance_km} km
+`);
+
+        L.circleMarker([candidate.lat, candidate.lng], {
+            radius: 9,
+            color,
+            fillColor: '#ffffff',
+            fillOpacity: 0.96,
+            weight: 3,
+        }).addTo(predictedHotspotLayer);
+    });
+}
+
+async function loadPredictedHotspots(){
+    const d = crimeDate?.value || '';
+    const t = crimeTime?.value || '';
+    try{
+        const response = await fetch(`/predict_hotspots?date=${encodeURIComponent(d)}&time=${encodeURIComponent(t)}&limit=10`);
+        const result = await response.json();
+        if(!response.ok || !result.ok){
+            clearPredictedHotspots();
+            return null;
+        }
+        renderPredictedHotspots(result.prediction);
+        if(window.currentPrimaryRouteCoords?.length && routeTouchesHotspot(window.currentPrimaryRouteCoords)){
+            showDangerToast();
+        }
+        return result.prediction;
+    }catch(error){
+        clearPredictedHotspots();
+        return null;
+    }
 }
 
 function drawPrimaryRoute(route){
@@ -866,13 +1426,23 @@ function buildStepText(step){
     return `${type}${roadName}`.replace(/\s+/g, ' ').trim();
 }
 
-function normalizeRoute(routeData){
+function normalizeRoute(routeData, meta = {}){
     const coordinates = (routeData.geometry?.coordinates || []).map(([lng, lat]) => L.latLng(lat, lng));
-    const steps = (routeData.legs || []).flatMap((leg) => {
-        return (leg.steps || []).map((step) => ({
-            text: buildStepText(step),
-            distance: step.distance || 0
-        }));
+    const legs = routeData.legs || [];
+    const steps = legs.flatMap((leg, legIndex) => {
+        return (leg.steps || [])
+            .filter((step) => {
+                const type = step.maneuver?.type || '';
+                if(type === 'depart' && legIndex > 0) return false;
+                if(type === 'arrive' && legIndex < legs.length - 1) return false;
+                return true;
+            })
+            .map((step) => ({
+                text: buildStepText(step),
+                distance: step.distance || 0,
+                type: step.maneuver?.type || '',
+                modifier: step.maneuver?.modifier || ''
+            }));
     });
 
     return {
@@ -881,11 +1451,14 @@ function normalizeRoute(routeData){
             totalDistance: routeData.distance || 0,
             totalTime: routeData.duration || 0
         },
-        steps
+        steps,
+        profile: meta.profile || 'driving'
     };
 }
 
-async function requestRoute(waypoints){
+async function requestRoute(waypoints, options = {}){
+    const profile = options.profile || 'driving';
+    const overview = options.overview || 'full';
     const points = waypoints
         .filter((point) => Number.isFinite(point?.lat) && Number.isFinite(point?.lng))
         .map((point) => `${point.lng},${point.lat}`)
@@ -893,13 +1466,13 @@ async function requestRoute(waypoints){
 
     if(!points) return null;
 
-    const url = `${OSRM_ROUTE_URL}/${points}?overview=full&steps=true&geometries=geojson&alternatives=false&continue_straight=true`;
+    const url = `${OSRM_ROUTE_ROOT}/${profile}/${points}?overview=${overview}&steps=true&geometries=geojson&alternatives=false&continue_straight=true`;
     try{
         const response = await fetch(url);
         if(!response.ok) return null;
         const data = await response.json();
         if(data.code !== 'Ok' || !data.routes?.length) return null;
-        return normalizeRoute(data.routes[0]);
+        return normalizeRoute(data.routes[0], { profile });
     }catch(error){
         return null;
     }
@@ -959,6 +1532,215 @@ function routeSummary(route, primaryScore){
     };
 }
 
+function setQuickNavStatus(message, color = '#5f6368'){
+    if(!quickNavStatus) return;
+    quickNavStatus.innerText = message || '';
+    quickNavStatus.style.color = color;
+}
+
+function setQuickNavActive(type){
+    currentQuickNavType = type || '';
+    if(quickNavSelect){
+        quickNavSelect.value = currentQuickNavType || '';
+        quickNavSelect.classList.toggle('placeholder', !currentQuickNavType);
+        const wrap = quickNavSelect.closest('.quick-nav-select-wrap');
+        if(wrap) wrap.classList.toggle('has-value', Boolean(currentQuickNavType));
+    }
+    if(quickNavTrigger){
+        quickNavTrigger.classList.toggle('active', Boolean(type));
+        quickNavTrigger.classList.toggle('neutral', !type);
+        quickNavTrigger.classList.toggle('police', Boolean(type) && type !== 'hospital');
+        quickNavTrigger.classList.toggle('hospital', type === 'hospital');
+    }
+    if(quickNavTriggerText){
+        if(!type){
+            quickNavTriggerText.innerHTML = `
+                <svg class="quick-nav-trigger-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/>
+                </svg>
+            `;
+        }else{
+            quickNavTriggerText.textContent = type === 'hospital' ? 'H' : 'T';
+        }
+    }
+}
+
+async function getCurrentLocationLatLng(){
+    if(!navigator.geolocation){
+        throw new Error('Location is not supported in this browser.');
+    }
+
+    const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        });
+    });
+
+    return L.latLng(position.coords.latitude, position.coords.longitude);
+}
+
+function getNearestPlace(origin, places){
+    return places
+        .map((place) => ({
+            ...place,
+            dist: map.distance([origin.lat, origin.lng], [place.lat, place.lng])
+        }))
+        .sort((a, b) => a.dist - b.dist)[0] || null;
+}
+
+function makeTargetIcon(type){
+    const bg = type === 'hospital' ? '#0f9d58' : '#1a73e8';
+    const label = type === 'hospital' ? 'H' : 'P';
+    return L.divIcon({
+        html: `
+            <div style="display:flex;flex-direction:column;align-items:center;">
+                <div style="background:${bg};color:#fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;box-shadow:0 8px 18px rgba(15,23,42,.24)">${label}</div>
+                <div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:12px solid ${bg};margin-top:-3px"></div>
+            </div>
+        `,
+        className: '',
+        iconSize: [38, 50],
+        iconAnchor: [19, 50]
+    });
+}
+
+async function findNearestEmergencyPlace(type){
+    const isHospital = type === 'hospital';
+    const label = isHospital ? 'Hospital' : 'Thana';
+    const places = isHospital ? window.hospitals : window.policeStations;
+
+    setQuickNavActive(type);
+    setQuickNavStatus(`Finding your location and nearest ${label.toLowerCase()}...`, '#8a5200');
+
+    try{
+        const currentLocation = await getCurrentLocationLatLng();
+        const destination = getNearestPlace(currentLocation, places);
+        if(!destination){
+            throw new Error(`No ${label.toLowerCase()} data available.`);
+        }
+
+        start.value = 'My Location';
+        startSug.dataset.lat = currentLocation.lat;
+        startSug.dataset.lng = currentLocation.lng;
+        end.value = destination.name;
+        endSug.dataset.lat = destination.lat;
+        endSug.dataset.lng = destination.lng;
+        startSug.style.display = 'none';
+        endSug.style.display = 'none';
+
+        stopSafetyMode();
+
+        if(mA) map.removeLayer(mA);
+        if(mB) map.removeLayer(mB);
+        if(stationLayer) map.removeLayer(stationLayer);
+        clearRenderedRoutes();
+        clearRouteUi();
+        window.currentPrimaryRouteCoords = [];
+        window.currentRouteOptions = [];
+        window.currentRouteContext = null;
+
+        quickNavLayer = L.layerGroup().addTo(map);
+        mA = L.marker(currentLocation, {icon: makeIcon('A')}).addTo(map).bindPopup('My current location');
+        mB = L.marker([destination.lat, destination.lng], {icon: makeTargetIcon(type)}).addTo(map)
+            .bindPopup(`<b>Nearest ${label}</b><br>${destination.name}<br>${formatDistance(destination.dist)} away`);
+        L.circle(currentLocation, {
+            radius: 55,
+            color: '#1a73e8',
+            fillColor: '#1a73e8',
+            fillOpacity: 0.12,
+            weight: 1
+        }).addTo(quickNavLayer);
+
+        const route = await requestRoute([currentLocation, L.latLng(destination.lat, destination.lng)]);
+        if(!route?.coordinates?.length){
+            throw new Error(`Route to the nearest ${label.toLowerCase()} could not be built right now.`);
+        }
+
+        window.currentPrimaryRouteCoords = route.coordinates;
+        drawPrimaryRoute(route);
+
+        const primaryOption = routeSummary(route, routeHotspotScore(route.coordinates));
+        primaryOption.label = `Nearest ${label} Route`;
+        const touches = routeTouchesHotspot(route.coordinates);
+        if(touches) showDangerToast();
+
+        window.currentRouteContext = {
+            startPoint: currentLocation,
+            endPoint: L.latLng(destination.lat, destination.lng),
+            primaryOption
+        };
+
+        const container = document.getElementById('nearestThanas');
+        window.currentRouteOptions = touches ? buildHotspotRouteOptions(route) : [primaryOption];
+        if(window.currentRouteOptions[0]){
+            window.currentRouteOptions[0].label = `Nearest ${label} Route`;
+        }
+
+        renderRouteChoices(container, window.currentRouteOptions);
+        renderAlternativeRouteSection(container, touches, currentLocation, L.latLng(destination.lat, destination.lng));
+        renderRouteInfo(primaryOption);
+        fitRoute(route);
+        mB.openPopup();
+
+        const phoneText = destination.phone ? ` Phone: ${destination.phone}.` : '';
+        setQuickNavStatus(
+            `${destination.name} is the nearest ${label.toLowerCase()} (${formatDistance(destination.dist)}). Route is ready.${phoneText}`,
+            '#166534'
+        );
+    }catch(error){
+        setQuickNavStatus(error.message || `Unable to find the nearest ${label.toLowerCase()}.`, '#d93025');
+        alert(error.message || `Unable to find the nearest ${label.toLowerCase()}.`);
+    }
+}
+
+function isRouteCleanEnough(route, primaryRoute, endPoint){
+    if(!route?.coordinates?.length) return false;
+
+    const endRoutePoint = route.coordinates[route.coordinates.length - 1];
+    if(!endRoutePoint || map.distance([endRoutePoint.lat, endRoutePoint.lng], [endPoint.lat, endPoint.lng]) > 80){
+        return false;
+    }
+
+    const primaryDistance = primaryRoute?.summary?.totalDistance || 0;
+    const routeDistance = route.summary?.totalDistance || 0;
+    if(primaryDistance > 0 && routeDistance > primaryDistance * 1.55){
+        return false;
+    }
+
+    const uTurnCount = (route.steps || []).filter((step) => step.modifier === 'uturn').length;
+    if(uTurnCount > 0) return false;
+
+    const tinyTurnCount = (route.steps || []).filter((step) => {
+        return step.distance < 25 && ['turn', 'continue', 'end of road'].includes(step.type);
+    }).length;
+
+    return tinyTurnCount < 2;
+}
+
+function scoreAlternativeRoute(route, primaryRoute, endPoint){
+    if(!route?.coordinates?.length) return Number.POSITIVE_INFINITY;
+    if(routeTouchesHotspot(route.coordinates, 240)) return Number.POSITIVE_INFINITY;
+
+    const endRoutePoint = route.coordinates[route.coordinates.length - 1];
+    if(!endRoutePoint || map.distance([endRoutePoint.lat, endRoutePoint.lng], [endPoint.lat, endPoint.lng]) > 80){
+        return Number.POSITIVE_INFINITY;
+    }
+
+    const routeDistance = route.summary?.totalDistance || Number.POSITIVE_INFINITY;
+    const primaryDistance = primaryRoute?.summary?.totalDistance || routeDistance;
+    const hotspotPenalty = routeHotspotScore(route.coordinates) * 2000;
+    const uTurnPenalty = (route.steps || []).filter((step) => step.modifier === 'uturn').length * 4000;
+    const tinyTurnPenalty = (route.steps || []).filter((step) => {
+        return step.distance < 25 && ['turn', 'continue', 'end of road'].includes(step.type);
+    }).length * 600;
+    const lengthPenalty = Math.max(0, routeDistance - (primaryDistance * 1.35));
+    const footPenalty = route.profile === 'foot' ? 450 : 0;
+
+    return hotspotPenalty + uTurnPenalty + tinyTurnPenalty + lengthPenalty + footPenalty + routeDistance;
+}
+
 function showPrimaryRouteSelection(){
     if(!window.currentRouteContext?.primaryOption?.route) return;
     clearAlternativeRouteLayer();
@@ -1008,16 +1790,39 @@ function setRouteOptionsStatus(message, color = '#8a5200'){
 }
 
 async function resolveDeferredRouteOption(option){
+    let progressCallback = null;
+    if(arguments.length > 1 && typeof arguments[1] === 'function'){
+        progressCallback = arguments[1];
+    }
+
     if(option?.route?.coordinates?.length) return option;
     if(!option?.side || !window.currentRouteContext) return null;
 
     const { startPoint, endPoint, primaryOption } = window.currentRouteContext;
     const attempts = [option.variant || 0, (option.variant || 0) + 1, (option.variant || 0) + 2];
+    let fallbackRoute = null;
+    let fallbackVariant = option.variant || 0;
+    let fallbackScore = Number.POSITIVE_INFINITY;
 
     for(const variant of attempts){
-        const route = await generateStepwiseAlternativeRoute(startPoint, endPoint, option.side, variant);
+        const route = await generateStepwiseAlternativeRoute(startPoint, endPoint, option.side, variant, (localProgress) => {
+            if(!progressCallback) return;
+            const variantIndex = attempts.indexOf(variant);
+            const overallProgress = ((variantIndex + localProgress) / attempts.length) * 100;
+            progressCallback(Math.min(96, overallProgress));
+        });
         if(!route?.coordinates?.length) continue;
         if(routeSignature(route) === routeSignature(primaryOption.route)) continue;
+
+        const candidateScore = scoreAlternativeRoute(route, primaryOption.route, endPoint);
+        if(candidateScore < fallbackScore){
+            fallbackRoute = route;
+            fallbackVariant = variant;
+            fallbackScore = candidateScore;
+        }
+
+        if(routeTouchesHotspot(route.coordinates, 220)) continue;
+        if(!isRouteCleanEnough(route, primaryOption.route, endPoint)) continue;
 
         option.route = route;
         option.variant = variant;
@@ -1028,7 +1833,24 @@ async function resolveDeferredRouteOption(option){
         return option;
     }
 
+    if(fallbackRoute){
+        option.route = fallbackRoute;
+        option.variant = fallbackVariant;
+        option.score = routeHotspotScore(fallbackRoute.coordinates);
+        option.isHotspotFree = option.score === 0;
+        option.distance = fallbackRoute.summary?.totalDistance || Number.POSITIVE_INFINITY;
+        option.duration = fallbackRoute.summary?.totalTime || 0;
+        return option;
+    }
+
     return null;
+}
+
+function setRouteButtonProgress(button, percent){
+    const progressNode = button?.querySelector('.route-option-progress');
+    if(!progressNode) return;
+    const safePercent = Math.max(0, Math.min(100, percent || 0));
+    progressNode.style.width = `${safePercent}%`;
 }
 
 async function handleRouteOptionSelection(option, button){
@@ -1040,18 +1862,24 @@ async function handleRouteOptionSelection(option, button){
         return;
     }
 
-    const originalLabel = option.label || button.innerText;
+    const labelNode = button.querySelector('.route-option-label');
+    const originalLabel = option.label || labelNode?.innerText || button.innerText;
     button.disabled = true;
-    button.innerText = `${originalLabel}...`;
+    button.classList.add('loading');
+    setRouteButtonProgress(button, 6);
+    if(labelNode) labelNode.innerText = `${originalLabel}...`;
     setRouteOptionsStatus(`Building ${originalLabel.toLowerCase()} on real roads...`, '#8a5200');
 
     try{
-        const resolved = await resolveDeferredRouteOption(option);
+        const resolved = await resolveDeferredRouteOption(option, (percent) => {
+            setRouteButtonProgress(button, percent);
+        });
         if(!resolved?.route){
             setRouteOptionsStatus(`${originalLabel} could not be built on real roads for this route.`, '#cf1322');
             return;
         }
 
+        setRouteButtonProgress(button, 100);
         drawAlternativeRoute(resolved.route, resolved.isHotspotFree ? '#0f9d58' : '#ff8f00');
         renderRouteInfo(resolved);
         fitRoute(resolved.route);
@@ -1062,7 +1890,9 @@ async function handleRouteOptionSelection(option, button){
         }
     }finally{
         button.disabled = false;
-        button.innerText = originalLabel;
+        button.classList.remove('loading');
+        setRouteButtonProgress(button, 0);
+        if(labelNode) labelNode.innerText = originalLabel;
     }
 }
 
@@ -1087,6 +1917,7 @@ function renderRouteChoices(container, options){
     options.slice(0, 3).forEach((option, index) => {
         const btn = document.createElement('button');
         btn.type = 'button';
+        btn.className = 'route-option-btn';
         btn.style.background = index === 0 ? '#1a73e8' : '#0f9d58';
         btn.style.color = '#fff';
         btn.style.fontWeight = '700';
@@ -1103,7 +1934,7 @@ function renderRouteChoices(container, options){
                 label = `Route ${index + 1} - Alt`;
             }
         }
-        btn.innerText = label;
+        btn.innerHTML = `<span class="route-option-progress"></span><span class="route-option-label">${label}</span>`;
 
         btn.onclick = async () => {
             await handleRouteOptionSelection(option, btn);
@@ -1190,67 +2021,55 @@ function buildBypassWaypointsForEncounter(coords, encounter, side = 1, variant =
     const tangentLength = Math.hypot(tangentLat, tangentLng) || 1;
     const unitPerpLat = (-tangentLng / tangentLength) * side;
     const unitPerpLng = (tangentLat / tangentLength) * side;
-    const clearance = variant === 0 ? 0.0065 : 0.009;
-    const lead = variant === 0 ? 0.0028 : 0.0042;
+    const clearance = [0.0032, 0.0042, 0.0052, 0.0062, 0.0072, 0.0082][Math.min(variant, 5)] || 0.0092;
+    const offsetLat = unitPerpLat * clearance;
+    const offsetLng = unitPerpLng * clearance;
 
-    return [
-        {
-            point: L.latLng(
-                beforePoint.lat + (unitPerpLat * clearance),
-                beforePoint.lng + (unitPerpLng * clearance)
-            ),
-            progress: beforeIndex + 0.1
-        },
-        {
-            point: L.latLng(
-                encounter.hotspot.lat + (unitPerpLat * (clearance * 1.3)) - ((tangentLat / tangentLength) * lead),
-                encounter.hotspot.lng + (unitPerpLng * (clearance * 1.3)) - ((tangentLng / tangentLength) * lead)
-            ),
-            progress: encounter.index + 0.2
-        },
-        {
-            point: L.latLng(
-                encounter.hotspot.lat + (unitPerpLat * (clearance * 1.3)) + ((tangentLat / tangentLength) * lead),
-                encounter.hotspot.lng + (unitPerpLng * (clearance * 1.3)) + ((tangentLng / tangentLength) * lead)
-            ),
-            progress: encounter.index + 0.3
-        },
-        {
-            point: L.latLng(
-                afterPoint.lat + (unitPerpLat * clearance),
-                afterPoint.lng + (unitPerpLng * clearance)
-            ),
-            progress: afterIndex + 0.4
-        }
-    ];
+    return [{
+        point: L.latLng(
+            encounter.hotspot.lat + offsetLat,
+            encounter.hotspot.lng + offsetLng
+        ),
+        progress: encounter.index + 0.2
+    }];
 }
 
-async function generateStepwiseAlternativeRoute(startPoint, endPoint, side = 1, variant = 0){
-    let route = await requestRoute([startPoint, endPoint]);
+async function generateStepwiseAlternativeRoute(startPoint, endPoint, side = 1, variant = 0, progressCallback = null){
+    const route = await requestRoute([startPoint, endPoint], { profile: 'driving', overview: 'simplified' });
     if(!route?.coordinates?.length) return null;
 
-    const waypointModels = [];
+    const encounter = findFirstHotspotEncounter(route.coordinates);
+    if(!encounter) return route;
 
-    for(let iteration = 0; iteration < 4; iteration += 1){
-        const encounter = findFirstHotspotEncounter(route.coordinates);
-        if(!encounter) return route;
+    let bestRoute = null;
+    let bestCandidateScore = Number.POSITIVE_INFINITY;
+    const profiles = ['driving', 'foot'];
+    const totalAttempts = 8 * profiles.length;
+    let completedAttempts = 0;
 
-        const bypassModels = buildBypassWaypointsForEncounter(route.coordinates, encounter, side, variant + iteration);
-        if(!bypassModels.length) return route;
+    for(let attempt = variant; attempt < variant + 8; attempt += 1){
+        const bypassModels = buildBypassWaypointsForEncounter(route.coordinates, encounter, side, attempt);
+        if(!bypassModels.length) continue;
 
-        waypointModels.push(...bypassModels);
-        waypointModels.sort((a, b) => a.progress - b.progress);
-
-        route = await requestRoute(
-            [startPoint].concat(waypointModels.map((item) => item.point)).concat([endPoint])
-        );
-
-        if(!route?.coordinates?.length){
-            return null;
+        for(const profile of profiles){
+            const candidate = await requestRoute(
+                [startPoint].concat(bypassModels.map((item) => item.point)).concat([endPoint]),
+                { profile, overview: 'simplified' }
+            );
+            completedAttempts += 1;
+            if(progressCallback){
+                progressCallback(completedAttempts / totalAttempts);
+            }
+            if(!candidate?.coordinates?.length) continue;
+            const candidateScore = scoreAlternativeRoute(candidate, route, endPoint);
+            if(candidateScore < bestCandidateScore){
+                bestRoute = candidate;
+                bestCandidateScore = candidateScore;
+            }
         }
     }
 
-    return route;
+    return bestRoute || route;
 }
 
 function renderAlternativeRouteSection(container, touches, startPoint, endPoint){
@@ -1285,6 +2104,24 @@ function updateSafetyButtonState(){
 
     safetyBtn.innerText = 'safty Mood';
     safetyBtn.style.background = safetyModeEnabled ? '#0f9d58' : '#1a73e8';
+}
+
+if(quickNavSelect){
+    quickNavSelect.addEventListener('change', () => {
+        setQuickNavActive(quickNavSelect.value);
+    });
+    setQuickNavActive('');
+}
+
+if(quickNavTrigger){
+    quickNavTrigger.addEventListener('click', () => {
+        const selectedValue = (quickNavSelect && quickNavSelect.value) || '';
+        if(!selectedValue){
+            setQuickNavStatus('Please choose Thana or Hospital first.', '#d93025');
+            return;
+        }
+        findNearestEmergencyPlace(selectedValue);
+    });
 }
 
 function updateSafetyPanelState(){
@@ -1336,9 +2173,16 @@ function stopAlertCountdown(){
 function updateAlertCountdownText(){
     const countdownEl = document.getElementById('sosAlertCountdown');
     if(!countdownEl) return;
-    countdownEl.innerText = alertCountdownRemaining > 0
-        ? `Notification countdown: ${alertCountdownRemaining} minute(s) left.`
-        : '';
+    if(alertCountdownRemainingSeconds <= 0){
+        countdownEl.innerText = '';
+        return;
+    }
+
+    const minutes = Math.floor(alertCountdownRemainingSeconds / 60);
+    const seconds = alertCountdownRemainingSeconds % 60;
+    const timeLeft = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    countdownEl.innerText = `Notification countdown: ${timeLeft} left.`;
 }
 
 async function sendRescueEmail(){
@@ -1422,22 +2266,22 @@ async function sendTestRescueEmail(){
 
 function startAlertCountdown(){
     stopAlertCountdown();
-    alertCountdownRemaining = safetySettings.countdownMinutes;
+    alertCountdownRemainingSeconds = safetySettings.countdownMinutes * 60;
     rescueEmailSent = false;
     updateAlertCountdownText();
 
     alertCountdownInterval = setInterval(async () => {
-        alertCountdownRemaining -= 1;
+        alertCountdownRemainingSeconds -= 1;
         updateAlertCountdownText();
 
-        if(alertCountdownRemaining <= 0){
+        if(alertCountdownRemainingSeconds <= 0){
             stopAlertCountdown();
             if(!rescueEmailSent){
                 rescueEmailSent = true;
                 await sendRescueEmail();
             }
         }
-    }, 60000);
+    }, 1000);
 }
 
 function playAlertBeep(){
@@ -1490,7 +2334,7 @@ function dismissSosAlert(){
     alertPinBuffer = '';
     stopAlertSound();
     stopAlertCountdown();
-    alertCountdownRemaining = 0;
+    alertCountdownRemainingSeconds = 0;
     updateAlertCountdownText();
     const safeBtn = document.getElementById('sosSafeBtn');
     if(safeBtn) safeBtn.disabled = true;
@@ -1758,6 +2602,10 @@ function showDangerToast(){
     setTimeout(()=>t.classList.remove("show"),40000);
 }
 
+function getAlertHotspots(){
+    return [...(window.hotspots || []), ...(window.predictedHotspots || [])];
+}
+
 function checkRouteHotspot(coords){
     for(let p of coords){
         for(let h of hotspots){
@@ -1772,10 +2620,27 @@ function checkRouteHotspot(coords){
 
 // return true if any point on the route is within 200m of a hotspot
 function routeTouchesHotspot(coords, threshold=200){
-    for(let p of coords){
-        for(let h of hotspots){
-            let d = map.distance([p.lat,p.lng],[h.lat,h.lng]);
-            if(d<=threshold) return true;
+    if(!coords || coords.length === 0) return false;
+    const alertHotspots = getAlertHotspots();
+    if(!alertHotspots.length) return false;
+
+    for(let i = 0; i < coords.length; i += 1){
+        const point = coords[i];
+        for(const hotspot of alertHotspots){
+            const directDistance = map.distance([point.lat, point.lng], [hotspot.lat, hotspot.lng]);
+            if(directDistance <= threshold) return true;
+
+            if(i === 0) continue;
+
+            const prevPoint = coords[i - 1];
+            const samples = 6;
+            for(let step = 1; step < samples; step += 1){
+                const t = step / samples;
+                const sampleLat = prevPoint.lat + ((point.lat - prevPoint.lat) * t);
+                const sampleLng = prevPoint.lng + ((point.lng - prevPoint.lng) * t);
+                const sampleDistance = map.distance([sampleLat, sampleLng], [hotspot.lat, hotspot.lng]);
+                if(sampleDistance <= threshold) return true;
+            }
         }
     }
     return false;
@@ -1784,10 +2649,41 @@ function routeTouchesHotspot(coords, threshold=200){
 function routeHotspotScore(coords, threshold=200){
     // lower is better: count of route points within threshold of a hotspot
     let count = 0;
-    for(let p of coords){
-        for(let h of hotspots){
-            let d = map.distance([p.lat,p.lng],[h.lat,h.lng]);
-            if(d<=threshold){ count++; break; }
+    if(!coords || coords.length === 0) return count;
+    const alertHotspots = getAlertHotspots();
+    if(!alertHotspots.length) return count;
+
+    for(let i = 0; i < coords.length; i += 1){
+        const point = coords[i];
+        let touched = false;
+
+        for(const hotspot of alertHotspots){
+            const directDistance = map.distance([point.lat, point.lng], [hotspot.lat, hotspot.lng]);
+            if(directDistance <= threshold){
+                touched = true;
+                break;
+            }
+
+            if(i === 0) continue;
+
+            const prevPoint = coords[i - 1];
+            const samples = 6;
+            for(let step = 1; step < samples; step += 1){
+                const t = step / samples;
+                const sampleLat = prevPoint.lat + ((point.lat - prevPoint.lat) * t);
+                const sampleLng = prevPoint.lng + ((point.lng - prevPoint.lng) * t);
+                const sampleDistance = map.distance([sampleLat, sampleLng], [hotspot.lat, hotspot.lng]);
+                if(sampleDistance <= threshold){
+                    touched = true;
+                    break;
+                }
+            }
+
+            if(touched) break;
+        }
+
+        if(touched){
+            count++;
         }
     }
     return count;
