@@ -1834,6 +1834,77 @@ function getNearestPlace(origin, places){
         .sort((a, b) => a.dist - b.dist)[0] || null;
 }
 
+function normalizePolygonPoint(point){
+    if(Array.isArray(point) && point.length >= 2){
+        const lat = Number(point[0]);
+        const lng = Number(point[1]);
+        if(Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+    }
+    if(point && typeof point === 'object'){
+        const lat = Number(point.lat);
+        const lng = Number(point.lng);
+        if(Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+    }
+    return null;
+}
+
+function isPointInsidePolygon(point, polygon){
+    const vertices = (polygon || [])
+        .map((vertex) => normalizePolygonPoint(vertex))
+        .filter(Boolean);
+    if(vertices.length < 3) return false;
+
+    const x = Number(point.lng);
+    const y = Number(point.lat);
+    let inside = false;
+
+    for(let i = 0, j = vertices.length - 1; i < vertices.length; j = i++){
+        const xi = vertices[i].lng;
+        const yi = vertices[i].lat;
+        const xj = vertices[j].lng;
+        const yj = vertices[j].lat;
+        const intersects = ((yi > y) !== (yj > y))
+            && (x < ((xj - xi) * (y - yi)) / ((yj - yi) || Number.EPSILON) + xi);
+        if(intersects) inside = !inside;
+    }
+
+    return inside;
+}
+
+function getThanaByContainingArea(origin){
+    const targetPoint = { lat: Number(origin?.lat), lng: Number(origin?.lng) };
+    if(!Number.isFinite(targetPoint.lat) || !Number.isFinite(targetPoint.lng)) return null;
+
+    const entries = Object.entries(window.thanaGeoData || {});
+    for(const [thanaName, payload] of entries){
+        const areas = payload?.areas || [];
+        for(const area of areas){
+            if(isPointInsidePolygon(targetPoint, area?.polygon || [])){
+                const station = getStationByName(thanaName);
+                if(station){
+                    return {
+                        ...station,
+                        dist: map.distance([targetPoint.lat, targetPoint.lng], [station.lat, station.lng]),
+                        areaMatched: true,
+                        matchedAreaName: area?.name || ''
+                    };
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+function resolveNearestPoliceStation(origin){
+    const matchedThana = getThanaByContainingArea(origin);
+    if(matchedThana) return matchedThana;
+
+    const nearest = getNearestPlace(origin, window.policeStations || []);
+    if(!nearest) return null;
+    return { ...nearest, areaMatched: false, matchedAreaName: '' };
+}
+
 function makeTargetIcon(type){
     const bg = type === 'hospital' ? '#0f9d58' : '#1a73e8';
     const label = type === 'hospital' ? 'H' : 'P';
@@ -1860,7 +1931,9 @@ async function findNearestEmergencyPlace(type){
 
     try{
         const currentLocation = await getCurrentLocationLatLng();
-        const destination = getNearestPlace(currentLocation, places);
+        const destination = isHospital
+            ? getNearestPlace(currentLocation, places)
+            : resolveNearestPoliceStation(currentLocation);
         if(!destination){
             throw new Error(`No ${label.toLowerCase()} data available.`);
         }
@@ -1928,8 +2001,11 @@ async function findNearestEmergencyPlace(type){
         mB.openPopup();
 
         const phoneText = destination.phone ? ` Phone: ${destination.phone}.` : '';
+        const sourceText = (!isHospital && destination.areaMatched)
+            ? ` You are inside ${destination.matchedAreaName || destination.name} area, so ${destination.name} was selected.`
+            : '';
         setQuickNavStatus(
-            `${destination.name} is the nearest ${label.toLowerCase()} (${formatDistance(destination.dist)}). Route is ready.${phoneText}`,
+            `${destination.name} is the nearest ${label.toLowerCase()} (${formatDistance(destination.dist)}). Route is ready.${phoneText}${sourceText}`,
             '#166534'
         );
     }catch(error){
