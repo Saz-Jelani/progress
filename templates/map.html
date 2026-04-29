@@ -65,6 +65,21 @@ body{margin:0;font-family:Arial;overflow:hidden}
     display:none;
 }
 .route-info-panel.active{display:block}
+.route-info-panel.collapsed .route-info-body{display:none}
+.route-info-panel.collapsed .route-info-toggle{
+    transform:rotate(-90deg);
+}
+.route-info-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    cursor:pointer;
+}
+.route-info-headline{
+    flex:1 1 auto;
+    min-width:0;
+}
 .quick-nav-box{
     position:fixed;
     top:14px;
@@ -211,26 +226,67 @@ body{margin:0;font-family:Arial;overflow:hidden}
     font-size:18px;
     font-weight:800;
     color:#1a1a1a;
-    margin:0 0 8px 0;
+    margin:0 0 6px 0;
 }
 .route-info-meta{
     font-size:18px;
     color:#444;
-    margin:0 0 8px 0;
+    margin:0;
 }
-.route-info-badge{
-    display:inline-block;
-    margin:0 0 10px 0;
-    padding:5px 8px;
-    border-radius:999px;
-    background:#edf7ed;
-    color:#166534;
-    font-size:21px;
+.route-info-toggle{
+    flex:0 0 auto;
+    border:none;
+    background:#eef4ff;
+    color:#1a73e8;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    font-size:18px;
+    font-weight:800;
+    line-height:1;
+    cursor:pointer;
+    transition:transform .18s ease;
+}
+.route-info-summary{
+    margin:12px 0 10px 0;
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:6px;
+}
+.route-info-mode{
+    padding:8px 8px;
+    border-radius:10px;
+    background:#f7f9fc;
+    border:1px solid #e4ebf5;
+    min-width:0;
+}
+.route-info-mode-label{
+    display:block;
+    font-size:10px;
     font-weight:700;
+    color:#5f6b7a;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+    margin-bottom:3px;
 }
-.route-info-badge.risky{
-    background:#fff7e6;
-    color:#8a5200;
+.route-info-mode-value{
+    display:block;
+    font-size:12px;
+    font-weight:800;
+    color:#162033;
+    white-space:nowrap;
+}
+.route-info-body{
+    border-top:1px solid #edf1f6;
+    padding-top:12px;
+}
+.route-info-section-title{
+    margin:0 0 10px 0;
+    font-size:12px;
+    font-weight:800;
+    color:#5f6b7a;
+    text-transform:uppercase;
+    letter-spacing:.4px;
 }
 .route-step-list{
     display:flex;
@@ -338,17 +394,15 @@ button{
 
 /* ===== DANGER TOAST ===== */
 .toast{
-    position:fixed;
-    left:-400px;
-    top:410px;
-    width:257px;
+    display:none;
+    width:100%;
     background:#b71c1c;
     color:#fff;
-    padding:18px;
-    border-radius:12px 0px 0px 12px;
-    box-shadow:-4px 6px 20px rgba(0,0,0,.3);
-    z-index:3000;
-    transition:1s ease;
+    padding:14px 16px;
+    border-radius:12px;
+    box-shadow:0 6px 20px rgba(0,0,0,.18);
+    box-sizing:border-box;
+    margin:0 0 10px 0;
 }
 .toast h4 {
     display: flex;
@@ -362,7 +416,16 @@ button{
     text-align: center;
     margin: 0px 0px;
 }
-.toast.show{left:1230px}
+.toast.show{
+    display:block;
+    animation:dangerToastFade 25s ease forwards;
+}
+@keyframes dangerToastFade{
+    0%{opacity:0;transform:translateY(-8px)}
+    8%{opacity:1;transform:translateY(0)}
+    88%{opacity:1;transform:translateY(0)}
+    100%{opacity:0;transform:translateY(-6px)}
+}
 
 /* ===== DANGER LEGEND ===== */
 .legend{
@@ -586,7 +649,7 @@ button{
         <input type="time" id="crimeTime">
 
         <button onclick="findRoute()">Find Route</button>
-        <div id="nearestThanas" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
+        <div id="routeSafetyPanelHost" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
     </div>
 
     <div id="tab-thana" class="tab-content" style="display:none">
@@ -632,7 +695,7 @@ button{
             <span id="quickNavTriggerText" class="quick-nav-trigger-text">T</span>
         </button>
     </div>
-    <div id="quickNavStatus" class="quick-nav-status">Tap any option to turn on your location and build the closest route.</div>
+    <!-- <div id="quickNavStatus" class="quick-nav-status">Tap any option to turn on your location and build the closest route.</div> -->
 </div>
 <div id="routeInfoPanel" class="route-info-panel"></div>
 </div>
@@ -688,6 +751,66 @@ const quickNavSelect = document.getElementById('quickNavSelect');
 const quickNavTrigger = document.getElementById('quickNavTrigger');
 const quickNavTriggerText = document.getElementById('quickNavTriggerText');
 const thanaCoverageStatus = document.getElementById('thanaCoverageStatus');
+const DHAKA_LOCATION_BOUNDS = {
+    minLat: 23.65,
+    maxLat: 23.90,
+    minLng: 90.30,
+    maxLng: 90.55
+};
+const GEOLOCATION_OPTIONS = {
+    enableHighAccuracy: true,
+    timeout: 20000,
+    maximumAge: 60000
+};
+
+function isInsideDhakaBounds(latLng){
+    const lat = Number(latLng?.lat);
+    const lng = Number(latLng?.lng);
+    return Number.isFinite(lat) && Number.isFinite(lng)
+        && lat >= DHAKA_LOCATION_BOUNDS.minLat
+        && lat <= DHAKA_LOCATION_BOUNDS.maxLat
+        && lng >= DHAKA_LOCATION_BOUNDS.minLng
+        && lng <= DHAKA_LOCATION_BOUNDS.maxLng;
+}
+
+function geolocationErrorMessage(error){
+    if(error?.code === 1){
+        return 'Location permission is blocked. Please allow location access from the browser address bar and try again.';
+    }
+    if(error?.code === 2){
+        return 'Current location is unavailable. Please turn on device location/Wi-Fi or select a start place manually.';
+    }
+    if(error?.code === 3){
+        return 'Location request timed out. Please try again, or select a start place manually.';
+    }
+    return error?.message || 'Unable to get your current location.';
+}
+
+function outsideDhakaLocationMessage(latLng){
+    const lat = Number(latLng?.lat);
+    const lng = Number(latLng?.lng);
+    const coordinateText = Number.isFinite(lat) && Number.isFinite(lng)
+        ? ` Browser gave: ${lat.toFixed(5)}, ${lng.toFixed(5)}.`
+        : '';
+    return `Your browser is giving a location outside the Dhaka map area.${coordinateText} Turn on Windows/phone location and Wi-Fi, then allow location access again.`;
+}
+
+async function readBrowserLocation(){
+    if(!navigator.geolocation){
+        throw new Error('Location is not supported in this browser.');
+    }
+
+    const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, GEOLOCATION_OPTIONS);
+    });
+
+    const latLng = L.latLng(position.coords.latitude, position.coords.longitude);
+    if(!isInsideDhakaBounds(latLng)){
+        throw new Error(outsideDhakaLocationMessage(latLng));
+    }
+
+    return latLng;
+}
 
 function updateThanaCoverageStatus(message, color = '#5f6368'){
     if(!thanaCoverageStatus) return;
@@ -934,53 +1057,72 @@ document.addEventListener('DOMContentLoaded', ()=>{
 window.hotspots = [];
 window.predictedHotspots = [];
 
-function loadHotspots(){
+function getHistoricalHotspotColor(weight){
+    if(weight >= 10) return "#000000";
+    if(weight == 9) return "#A30000";
+    if(weight == 8) return "#060075";
+    if(weight == 7) return "#454064";
+    if(weight == 6) return "#fdd835";
+    if(weight == 5) return "#fff176";
+    return "#90caf9";
+}
+
+function historicalHotspotBlockedByPrediction(hotspot){
+    const predicted = window.predictedHotspots || [];
+    if(!predicted.length) return false;
+
+    return predicted.some((candidate) => {
+        const distance = map.distance([hotspot.lat, hotspot.lng], [candidate.lat, candidate.lng]);
+        return distance <= (candidate.radius || 0);
+    });
+}
+
+function renderHistoricalHotspots(){
+    if(window.hotspotLayer) map.removeLayer(window.hotspotLayer);
+    window.hotspotLayer = L.layerGroup().addTo(map);
+
+    (window.hotspots || []).forEach((h) => {
+        if(historicalHotspotBlockedByPrediction(h)) return;
+
+        const clr = getHistoricalHotspotColor(h.weight);
+        L.circleMarker([h.lat,h.lng],{
+            radius:7,
+            color: clr,
+            fillColor: clr,
+            fillOpacity:0.66,
+            weight:1.5,
+        }).addTo(window.hotspotLayer)
+        .bindPopup(`
+<b>Crime:</b> ${h.crime}<br>
+<b>Time:</b> ${h.time_range}
+`);
+    });
+}
+
+function loadHotspots(options = {}){
+    const includePrediction = options.includePrediction !== false;
     let d = crimeDate.value;
     let t = crimeTime.value;
 
     fetch(`/get_hotspots?date=${d}&time=${t}`)
     .then(r=>r.json())
     .then(data=>{
-        if(window.hotspotLayer) map.removeLayer(window.hotspotLayer);
-        window.hotspotLayer = L.layerGroup().addTo(map);
-
         window.hotspots = data;
-
-        function getColor(weight){
-            if(weight >= 10) return "#000000";   // dark red
-            if(weight == 9)  return "#A30000";   // light red
-            if(weight == 8)  return "#060075";   // orange
-            if(weight == 7)  return "#454064";   // light orange
-            if(weight == 6)  return "#fdd835";   // yellow
-            if(weight == 5)  return "#fff176";   // light yellow
-            return "#90caf9";                   // default blue
-        }
-
-        data.forEach(h=>{
-            let clr = getColor(h.weight);
-
-            L.circleMarker([h.lat,h.lng],{
-                radius:7,
-                color: clr,
-                fillColor: clr,
-                fillOpacity:0.66,
-                weight:1.5,
-            }).addTo(window.hotspotLayer)
-            .bindPopup(`
-<b>Crime:</b> ${h.crime}<br>
-<b>Risk:</b> ${h.weight}/10<br>
-<b>Time:</b> ${h.time_range}
-`);
-        });
+        renderHistoricalHotspots();
     });
 
-    loadPredictedHotspots();
+    if(includePrediction){
+        loadPredictedHotspots();
+    }
 }
 
-crimeDate.onchange = loadHotspots;
-crimeTime.onchange = loadHotspots;
+crimeDate.onchange = () => loadHotspots();
+crimeTime.onchange = () => loadHotspots();
 initializeCrimeDateTimeInputs();
-loadHotspots();
+loadHotspots({ includePrediction: false });
+setTimeout(() => {
+    loadPredictedHotspots();
+}, 600);
 
 /* ================= SEARCH ================= */
 function debounce(fn,delay=300){
@@ -988,26 +1130,17 @@ function debounce(fn,delay=300){
 }
 
 async function setStartAsMyLocation(){
-    if(!navigator.geolocation){
-        alert('Location is not supported in this browser.');
-        return;
-    }
-
     try{
-        const position = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            });
-        });
+        const currentLocation = await readBrowserLocation();
 
         start.value = 'My Location';
-        startSug.dataset.lat = position.coords.latitude;
-        startSug.dataset.lng = position.coords.longitude;
+        startSug.dataset.lat = currentLocation.lat;
+        startSug.dataset.lng = currentLocation.lng;
         startSug.style.display = "none";
+        return currentLocation;
     }catch(error){
-        alert('Unable to get your current location.');
+        alert(geolocationErrorMessage(error));
+        throw error;
     }
 }
 
@@ -1203,6 +1336,10 @@ window.currentRouteOptions = [];
 window.currentRouteContext = null;
 const routeInfoPanel = document.getElementById('routeInfoPanel');
 const OSRM_ROUTE_ROOT = 'https://router.project-osrm.org/route/v1';
+const routeDurationCache = new Map();
+let routeInfoCollapsed = true;
+let dangerToastTimer = null;
+let dangerToastVisible = false;
 
 function makeIcon(t){
     return L.divIcon({
@@ -1243,7 +1380,9 @@ function clearRenderedRoutes(){
 
 function hideRouteInfo(){
     routeInfoPanel.classList.remove('active');
+    routeInfoPanel.classList.remove('collapsed');
     routeInfoPanel.innerHTML = '';
+    routeInfoCollapsed = true;
 }
 
 function clearRouteUi(){
@@ -1272,12 +1411,13 @@ function clearPredictedHotspots(){
         predictedHotspotLayer = null;
     }
     window.predictedHotspots = [];
+    renderHistoricalHotspots();
 }
 
 function predictionColor(level){
     if(level === 'High') return '#b42318';
-    if(level === 'Medium') return '#f79009';
-    return '#1570ef';
+    if(level === 'Medium') return '#d92d20';
+    return '#f97066';
 }
 
 function getPredictedHotspotMarkerSizes(index = 0){
@@ -1296,14 +1436,16 @@ function renderPredictedHotspots(prediction){
     const candidates = prediction?.hotspot_candidates || [];
     if(!candidates.length) return;
 
-    window.predictedHotspots = candidates.map((candidate) => ({
+    window.predictedHotspots = candidates.map((candidate, index) => ({
         lat: Number(candidate.lat),
         lng: Number(candidate.lng),
+        radius: getPredictedHotspotMarkerSizes(index).outerRadius,
         risk_level: candidate.risk_level,
         risk_percent: candidate.risk_percent,
         place: candidate.place,
         predicted: true,
     }));
+    renderHistoricalHotspots();
 
     predictedHotspotLayer = L.layerGroup().addTo(map);
     candidates.forEach((candidate, index) => {
@@ -1316,27 +1458,9 @@ function renderPredictedHotspots(prediction){
             fillOpacity: 0.14,
             opacity: 0.5,
             weight: size.outerWeight,
-        }).addTo(predictedHotspotLayer);
-
-        L.circle([candidate.lat, candidate.lng], {
-            radius: size.innerRadius,
-            color,
-            fillColor: color,
-            fillOpacity: 0.08,
-            weight: size.innerWeight,
         }).addTo(predictedHotspotLayer).bindPopup(`
-<b>Predicted hotspot:</b> ${candidate.place}<br>
-<b>Risk:</b> ${candidate.risk_percent}% (${candidate.risk_level})<br>
-<b>Nearest area match:</b> ${candidate.nearest_place_distance_km} km
+<b>Predicted hotspot:</b> ${candidate.place}
 `);
-
-        L.circleMarker([candidate.lat, candidate.lng], {
-            radius: 9,
-            color,
-            fillColor: '#ffffff',
-            fillOpacity: 0.96,
-            weight: 3,
-        }).addTo(predictedHotspotLayer);
     });
 }
 
@@ -1351,25 +1475,36 @@ async function loadPredictedHotspots(){
             return null;
         }
         renderPredictedHotspots(result.prediction);
+        refreshPrimaryRouteAppearance();
         if(window.currentPrimaryRouteCoords?.length && routeTouchesHotspot(window.currentPrimaryRouteCoords)){
             showDangerToast();
         }
         return result.prediction;
     }catch(error){
         clearPredictedHotspots();
+        refreshPrimaryRouteAppearance();
         return null;
     }
 }
 
 function drawPrimaryRoute(route){
+    const touchesHotspot = routeTouchesHotspot(route?.coordinates || []);
     if(mainRouteLayer) map.removeLayer(mainRouteLayer);
     mainRouteLayer = L.polyline(route.coordinates, {
-        color: '#d93025',
+        color: touchesHotspot ? '#d93025' : '#1a73e8',
         weight: 7,
         opacity: 0.95,
         lineCap: 'round',
         lineJoin: 'round'
     }).addTo(map);
+}
+
+function refreshPrimaryRouteAppearance(){
+    if(!mainRouteLayer || !window.currentPrimaryRouteCoords?.length) return;
+    const touchesHotspot = routeTouchesHotspot(window.currentPrimaryRouteCoords);
+    mainRouteLayer.setStyle({
+        color: touchesHotspot ? '#d93025' : '#1a73e8'
+    });
 }
 
 function drawAlternativeRoute(route, color = '#0f9d58'){
@@ -1401,6 +1536,85 @@ function formatDuration(seconds = 0){
     if(hours && minutes) return `${hours} hr ${minutes} min`;
     if(hours) return `${hours} hr`;
     return `${minutes} min`;
+}
+
+function estimateDurationFromDistance(distanceMeters = 0, speedKmh = 5){
+    if(!distanceMeters || !speedKmh) return 0;
+    const metersPerSecond = (speedKmh * 1000) / 3600;
+    return Math.round(distanceMeters / metersPerSecond);
+}
+
+function estimateModeDuration(distanceMeters = 0, speedKmh = 5, bufferMinutes = 0){
+    const travelSeconds = estimateDurationFromDistance(distanceMeters, speedKmh);
+    return Math.max(60, travelSeconds + (bufferMinutes * 60));
+}
+
+function buildRouteDurationKey(startPoint, endPoint){
+    if(!startPoint || !endPoint) return '';
+    return [
+        startPoint.lat.toFixed(5),
+        startPoint.lng.toFixed(5),
+        endPoint.lat.toFixed(5),
+        endPoint.lng.toFixed(5)
+    ].join('|');
+}
+
+function getRouteDurationsPlaceholder(distance = 0, duration = 0){
+    const carBase = Math.max(60, duration || estimateModeDuration(distance, 32, 1));
+    return {
+        car: carBase,
+        bike: Math.max(carBase + 60, estimateModeDuration(distance, 26, 1)),
+        bicycle: Math.max(carBase + 180, estimateModeDuration(distance, 14, 1)),
+        walking: Math.max(carBase + 420, estimateModeDuration(distance, 4.8, 2))
+    };
+}
+
+async function loadRouteDurations(option){
+    const startPoint = window.currentRouteContext?.startPoint;
+    const endPoint = window.currentRouteContext?.endPoint;
+    if(!option?.route?.coordinates?.length || !startPoint || !endPoint){
+        return getRouteDurationsPlaceholder(option?.distance || 0, option?.duration || 0);
+    }
+
+    const cacheKey = buildRouteDurationKey(startPoint, endPoint);
+    if(cacheKey && routeDurationCache.has(cacheKey)){
+        return routeDurationCache.get(cacheKey);
+    }
+
+    const placeholder = getRouteDurationsPlaceholder(option.distance || 0, option.duration || 0);
+    const durationPromise = Promise.resolve().then(() => {
+        const distanceMeters = option.distance || 0;
+        const carSeconds = Math.max(60, option.route?.summary?.totalTime || placeholder.car);
+        const bikeSeconds = Math.max(carSeconds + 60, estimateModeDuration(distanceMeters, 26, 1));
+        const bicycleSeconds = Math.max(bikeSeconds + 120, estimateModeDuration(distanceMeters, 14, 1));
+        const walkingSeconds = Math.max(bicycleSeconds + 180, estimateModeDuration(distanceMeters, 4.8, 2));
+        return {
+            car: carSeconds,
+            bike: bikeSeconds,
+            bicycle: bicycleSeconds,
+            walking: walkingSeconds
+        };
+    }).catch(() => placeholder);
+
+    if(cacheKey){
+        routeDurationCache.set(cacheKey, durationPromise);
+    }
+    return durationPromise;
+}
+
+function updateRouteInfoDurations(durations){
+    if(!routeInfoPanel.classList.contains('active')) return;
+    Object.entries(durations || {}).forEach(([mode, seconds]) => {
+        const node = routeInfoPanel.querySelector(`[data-route-mode-value="${mode}"]`);
+        if(node){
+            node.textContent = formatDuration(seconds || 0);
+        }
+    });
+}
+
+function toggleRouteInfoPanel(){
+    routeInfoCollapsed = !routeInfoCollapsed;
+    routeInfoPanel.classList.toggle('collapsed', routeInfoCollapsed);
 }
 
 function buildStepText(step){
@@ -1459,8 +1673,10 @@ function normalizeRoute(routeData, meta = {}){
 async function requestRoute(waypoints, options = {}){
     const profile = options.profile || 'driving';
     const overview = options.overview || 'full';
-    const points = waypoints
+    const validWaypoints = waypoints
         .filter((point) => Number.isFinite(point?.lat) && Number.isFinite(point?.lng))
+        .map((point) => L.latLng(point.lat, point.lng));
+    const points = validWaypoints
         .map((point) => `${point.lng},${point.lat}`)
         .join(';');
 
@@ -1472,7 +1688,22 @@ async function requestRoute(waypoints, options = {}){
         if(!response.ok) return null;
         const data = await response.json();
         if(data.code !== 'Ok' || !data.routes?.length) return null;
-        return normalizeRoute(data.routes[0], { profile });
+        const route = normalizeRoute(data.routes[0], { profile });
+        const startPoint = validWaypoints[0];
+        const endPoint = validWaypoints[validWaypoints.length - 1];
+        const routeStart = route.coordinates[0];
+        const routeEnd = route.coordinates[route.coordinates.length - 1];
+        const directDistance = startPoint && endPoint ? map.distance(startPoint, endPoint) : 0;
+        const impossibleDistance = Math.max(150000, (directDistance * 8) + 5000);
+        if(
+            !route.coordinates.length
+            || (startPoint && routeStart && map.distance(startPoint, routeStart) > 800)
+            || (endPoint && routeEnd && map.distance(endPoint, routeEnd) > 800)
+            || (route.summary?.totalDistance || 0) > impossibleDistance
+        ){
+            return null;
+        }
+        return route;
     }catch(error){
         return null;
     }
@@ -1484,12 +1715,6 @@ function renderRouteInfo(option){
         return;
     }
 
-    const badgeText = option.isHotspotFree
-        ? 'Hotspot-free route'
-        : option.score < option.primaryScore
-            ? `Hotspot score reduced to ${option.score}`
-            : `Hotspot score ${option.score}`;
-
     const stepsHtml = (option.route.steps || []).slice(0, 12).map((step) => `
         <div class="route-step">
             <div class="route-step-text">${step.text}</div>
@@ -1498,12 +1723,43 @@ function renderRouteInfo(option){
     `).join('');
 
     routeInfoPanel.innerHTML = `
-        <div class="route-info-title">${option.label}</div>
-        <div class="route-info-meta">${formatDistance(option.distance)}, ${formatDuration(option.duration)}</div>
-        <div class="route-info-badge ${option.isHotspotFree ? '' : 'risky'}">${badgeText}</div>
-        <div class="route-step-list">${stepsHtml || '<div class="route-step"><div class="route-step-text">No step details available.</div></div>'}</div>
+        <div class="route-info-header" onclick="toggleRouteInfoPanel()">
+            <div class="route-info-headline">
+                <div class="route-info-title">${option.label}</div>
+                <div class="route-info-meta">${formatDistance(option.distance)}</div>
+            </div>
+            <button type="button" class="route-info-toggle" aria-label="Toggle route details">&#9662;</button>
+        </div>
+        <div class="route-info-summary">
+            <div class="route-info-mode">
+                <span class="route-info-mode-label">Car</span>
+                <span class="route-info-mode-value" data-route-mode-value="car">${formatDuration(option.duration)}</span>
+            </div>
+            <div class="route-info-mode">
+                <span class="route-info-mode-label">Bike</span>
+                <span class="route-info-mode-value" data-route-mode-value="bike">Loading...</span>
+            </div>
+            <div class="route-info-mode">
+                <span class="route-info-mode-label">Bicycle</span>
+                <span class="route-info-mode-value" data-route-mode-value="bicycle">Loading...</span>
+            </div>
+            <div class="route-info-mode">
+                <span class="route-info-mode-label">Walking</span>
+                <span class="route-info-mode-value" data-route-mode-value="walking">Loading...</span>
+            </div>
+        </div>
+        <div class="route-info-body">
+            <div class="route-info-section-title">Route Steps</div>
+            <div class="route-step-list">${stepsHtml || '<div class="route-step"><div class="route-step-text">No step details available.</div></div>'}</div>
+        </div>
     `;
     routeInfoPanel.classList.add('active');
+    routeInfoPanel.classList.toggle('collapsed', routeInfoCollapsed);
+
+    updateRouteInfoDurations(getRouteDurationsPlaceholder(option.distance || 0, option.duration || 0));
+    loadRouteDurations(option).then((durations) => {
+        updateRouteInfoDurations(durations);
+    });
 }
 
 function routeSignature(route){
@@ -1566,19 +1822,7 @@ function setQuickNavActive(type){
 }
 
 async function getCurrentLocationLatLng(){
-    if(!navigator.geolocation){
-        throw new Error('Location is not supported in this browser.');
-    }
-
-    const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-        });
-    });
-
-    return L.latLng(position.coords.latitude, position.coords.longitude);
+    return readBrowserLocation();
 }
 
 function getNearestPlace(origin, places){
@@ -1644,7 +1888,7 @@ async function findNearestEmergencyPlace(type){
         quickNavLayer = L.layerGroup().addTo(map);
         mA = L.marker(currentLocation, {icon: makeIcon('A')}).addTo(map).bindPopup('My current location');
         mB = L.marker([destination.lat, destination.lng], {icon: makeTargetIcon(type)}).addTo(map)
-            .bindPopup(`<b>Nearest ${label}</b><br>${destination.name}<br>${formatDistance(destination.dist)} away`);
+            .bindPopup(`<b>Nearest ${label}</b><br>${destination.name}`);
         L.circle(currentLocation, {
             radius: 55,
             color: '#1a73e8',
@@ -1660,11 +1904,13 @@ async function findNearestEmergencyPlace(type){
 
         window.currentPrimaryRouteCoords = route.coordinates;
         drawPrimaryRoute(route);
+        await loadPredictedHotspots();
 
         const primaryOption = routeSummary(route, routeHotspotScore(route.coordinates));
         primaryOption.label = `Nearest ${label} Route`;
         const touches = routeTouchesHotspot(route.coordinates);
-        if(touches) showDangerToast();
+        renderSafetyPanel();
+        setDangerToastVisible(touches);
 
         window.currentRouteContext = {
             startPoint: currentLocation,
@@ -1672,14 +1918,11 @@ async function findNearestEmergencyPlace(type){
             primaryOption
         };
 
-        const container = document.getElementById('nearestThanas');
-        window.currentRouteOptions = touches ? buildHotspotRouteOptions(route) : [primaryOption];
+        window.currentRouteOptions = [primaryOption];
         if(window.currentRouteOptions[0]){
             window.currentRouteOptions[0].label = `Nearest ${label} Route`;
         }
 
-        renderRouteChoices(container, window.currentRouteOptions);
-        renderAlternativeRouteSection(container, touches, currentLocation, L.latLng(destination.lat, destination.lng));
         renderRouteInfo(primaryOption);
         fitRoute(route);
         mB.openPopup();
@@ -1690,8 +1933,9 @@ async function findNearestEmergencyPlace(type){
             '#166534'
         );
     }catch(error){
-        setQuickNavStatus(error.message || `Unable to find the nearest ${label.toLowerCase()}.`, '#d93025');
-        alert(error.message || `Unable to find the nearest ${label.toLowerCase()}.`);
+        const message = geolocationErrorMessage(error) || `Unable to find the nearest ${label.toLowerCase()}.`;
+        setQuickNavStatus(message, '#d93025');
+        alert(message);
     }
 }
 
@@ -1758,26 +2002,6 @@ function buildHotspotRouteOptions(primaryRoute){
             primaryScore,
             score: primaryScore,
             isHotspotFree: primaryScore === 0
-        },
-        {
-            id: 'left-bypass',
-            label: 'Route 2 - Left Bypass',
-            side: -1,
-            variant: 0,
-            route: null,
-            primaryScore,
-            score: Number.POSITIVE_INFINITY,
-            isHotspotFree: false
-        },
-        {
-            id: 'right-bypass',
-            label: 'Route 3 - Right Bypass',
-            side: 1,
-            variant: 0,
-            route: null,
-            primaryScore,
-            score: Number.POSITIVE_INFINITY,
-            isHotspotFree: false
         }
     ];
 }
@@ -1914,7 +2138,7 @@ function renderRouteChoices(container, options){
     title.innerText = 'Route Options';
     wrap.appendChild(title);
 
-    options.slice(0, 3).forEach((option, index) => {
+    options.slice(0, 1).forEach((option, index) => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'route-option-btn';
@@ -1948,9 +2172,7 @@ function renderRouteChoices(container, options){
     status.style.fontSize = '13px';
     status.style.color = '#8a5200';
     status.style.padding = '4px 2px 0 2px';
-    status.innerText = options.some((option) => option.side)
-        ? 'Route 2 and Route 3 will build real left/right bypass routes when you tap them.'
-        : '';
+    status.innerText = '';
     wrap.appendChild(status);
 
     container.prepend(wrap);
@@ -2092,7 +2314,7 @@ function renderAlternativeRouteSection(container, touches, startPoint, endPoint)
     info.style.color = '#8a5200';
     info.style.border = '1px solid #ffd591';
     info.style.fontSize = '13px';
-    info.innerText = 'Current route touches a hotspot. Use Route 2 and Route 3 to build real left/right bypass routes.';
+    info.innerText = 'Current route touches a hotspot. Please use caution on this route.';
     wrap.appendChild(info);
 
     container.appendChild(wrap);
@@ -2232,24 +2454,19 @@ async function getRequiredRescueLocation(){
         return { lat: latLng.lat, lng: latLng.lng };
     }
 
-    if(!navigator.geolocation){
-        throw new Error('Location access is not supported in this browser.');
-    }
-
     const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
-        });
-    }).catch(() => {
-        throw new Error('Current location could not be captured. Please allow location access and try again.');
+        navigator.geolocation.getCurrentPosition(resolve, reject, GEOLOCATION_OPTIONS);
+    }).catch((error) => {
+        throw new Error(geolocationErrorMessage(error));
     });
 
     const location = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
     };
+    if(!isInsideDhakaBounds(location)){
+        throw new Error(outsideDhakaLocationMessage(location));
+    }
 
     handleLiveLocation(position);
     return location;
@@ -2432,6 +2649,10 @@ function handleLiveLocation(position){
     const lng = position.coords.longitude;
     const accuracy = position.coords.accuracy || 0;
     const currentLatLng = [lat, lng];
+    if(!isInsideDhakaBounds({ lat, lng })){
+        updateSafetyStatus(outsideDhakaLocationMessage({ lat, lng }), '#d93025');
+        return;
+    }
 
     if(!liveLocationMarker){
         const liveIcon = L.divIcon({
@@ -2520,9 +2741,8 @@ function startSafetyMode(){
             stopSafetyMode();
         },
         {
-            enableHighAccuracy: true,
-            maximumAge: 5000,
-            timeout: 10000
+            ...GEOLOCATION_OPTIONS,
+            maximumAge: 5000
         }
     );
 
@@ -2543,6 +2763,14 @@ if(sosSafeBtn){
 }
 
 async function findRoute(){
+    if((start.value || '').trim().toLowerCase() === 'my location' && (!startSug.dataset.lat || !startSug.dataset.lng)){
+        try{
+            await setStartAsMyLocation();
+        }catch(error){
+            return;
+        }
+    }
+
     if(!startSug.dataset.lat||!endSug.dataset.lat){
         alert("Select from suggestions");
         return;
@@ -2552,6 +2780,11 @@ async function findRoute(){
 
     const s=L.latLng(startSug.dataset.lat,startSug.dataset.lng);
     const e=L.latLng(endSug.dataset.lat,endSug.dataset.lng);
+
+    if(!isInsideDhakaBounds(s) || !isInsideDhakaBounds(e)){
+        alert('Please select Dhaka locations only. Your selected point is outside the Dhaka map area.');
+        return;
+    }
 
     if(mA) map.removeLayer(mA);
     if(mB) map.removeLayer(mB);
@@ -2572,11 +2805,12 @@ async function findRoute(){
 
     window.currentPrimaryRouteCoords = primaryRoute.coordinates;
     drawPrimaryRoute(primaryRoute);
+    await loadPredictedHotspots();
 
     const primaryOption = routeSummary(primaryRoute, routeHotspotScore(primaryRoute.coordinates));
     const touches = routeTouchesHotspot(primaryRoute.coordinates);
-    if(touches) showDangerToast();
-    showNearestStations(primaryRoute.coordinates);
+    renderSafetyPanel();
+    setDangerToastVisible(touches);
 
     window.currentRouteContext = {
         startPoint: s,
@@ -2584,22 +2818,37 @@ async function findRoute(){
         primaryOption
     };
 
-    const container = document.getElementById('nearestThanas');
-    window.currentRouteOptions = touches
-        ? buildHotspotRouteOptions(primaryRoute)
-        : [primaryOption];
-
-    renderRouteChoices(container, window.currentRouteOptions);
-    renderAlternativeRouteSection(container, touches, s, e);
+    window.currentRouteOptions = [primaryOption];
     renderRouteInfo(primaryOption);
     fitRoute(primaryRoute);
 }
 
 /* ================= HOTSPOT CHECK ================= */
 function showDangerToast(){
-    const t=document.getElementById("dangerToast");
+    setDangerToastVisible(true);
+}
+
+function setDangerToastVisible(visible){
+    const t=document.getElementById("routeDangerAlert");
+    if(!t) return;
+    if(dangerToastTimer){
+        clearTimeout(dangerToastTimer);
+        dangerToastTimer = null;
+    }
+    if(!visible){
+        dangerToastVisible = false;
+        t.classList.remove("show");
+        return;
+    }
+    dangerToastVisible = true;
+    t.classList.remove("show");
+    void t.offsetWidth;
     t.classList.add("show");
-    setTimeout(()=>t.classList.remove("show"),40000);
+    dangerToastTimer = setTimeout(()=>{
+        t.classList.remove("show");
+        dangerToastVisible = false;
+        dangerToastTimer = null;
+    },25000);
 }
 
 function getAlertHotspots(){
@@ -2689,44 +2938,9 @@ function routeHotspotScore(coords, threshold=200){
     return count;
 }
 
-// Show the nearest N police stations to the given start LatLng (default 3)
-function makePoliceIcon(label){
-    return L.divIcon({
-        html: `
-            <div style="display:flex;flex-direction:column;align-items:center;">
-                <div style="background:#ff0000;color:#fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;box-shadow:0 2px 6px rgba(0,0,0,.3)">👮</div>
-                <div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid #1a73e8;margin-top:-4px"></div>
-            </div>
-        `,
-        className:"",
-        iconSize: [38,48],
-        iconAnchor: [19,48]
-    });
-}
-
-function showNearestStations(routeCoords, radiusMeters = 1000){
-    if(!routeCoords || !routeCoords.length) return;
-    if(stationLayer) map.removeLayer(stationLayer);
-    stationLayer = L.layerGroup().addTo(map);
-
-    // compute minimum distance from each station to any point on the route
-    const list = window.policeStations.map(s=>{
-        let minD = Infinity;
-        for(const p of routeCoords){
-            const d = map.distance([p.lat,p.lng],[s.lat,s.lng]);
-            if(d < minD) minD = d;
-        }
-        return {...s, dist: minD};
-    });
-
-    // filter stations that lie within radiusMeters of the route
-    const nearby = list.filter(s=>s.dist <= radiusMeters).sort((a,b)=>a.dist-b.dist);
-
-    // prepare storage for markers (created when toggle button clicked)
-    window.currentNearestMarkers = new Array(nearby.length).fill(null);
-
-    // render single toggle button under the Find Route button
-    const container = document.getElementById('nearestThanas');
+function renderSafetyPanel(){
+    const container = document.getElementById('routeSafetyPanelHost');
+    if(!container) return;
     container.innerHTML = '';
 
     const safetyBtn = document.createElement('button');
@@ -2745,6 +2959,22 @@ function showNearestStations(routeCoords, radiusMeters = 1000){
 
     container.appendChild(safetyBtn);
     updateSafetyButtonState();
+
+    const dangerToast = document.createElement('div');
+    dangerToast.id = 'routeDangerAlert';
+    dangerToast.className = 'toast';
+    dangerToast.innerHTML = `
+        <h4><span></span> Crime Zone Alert</h4>
+        <p class="centered">Your selected route passes through</p>
+        <p class="centered">risk crime hotspot.</p>
+        <br>
+        <p class="centered"><b>Please stay alert or consider</b></p>
+        <p class="centered"><b>alternative routes.</b></p>
+    `;
+    if(dangerToastVisible){
+        dangerToast.classList.add('show');
+    }
+    container.appendChild(dangerToast);
 
     const sosPanel = document.createElement('div');
     sosPanel.id = 'sosPanel';
@@ -2801,65 +3031,6 @@ function showNearestStations(routeCoords, radiusMeters = 1000){
     sosTestBtn.onclick = async () => {
         await sendTestRescueEmail();
     };
-
-    const toggle = document.createElement('button');
-    toggle.style.padding = '10px';
-    toggle.style.borderRadius = '8px';
-    toggle.style.border = '1px solid #ddd';
-    toggle.style.background = '#fff';
-    toggle.style.color = '#1a73e8';
-    toggle.style.fontWeight = '600';
-    toggle.style.cursor = 'pointer';
-    toggle.innerText = `Show Nearest Thanas 👮`;
-
-    let shown = false;
-    toggle.onclick = ()=>{
-        if(!shown){
-            if(nearby.length === 0){
-                toggle.innerText = 'No thanas within 1 km';
-                return;
-            }
-
-            // create markers for all nearby thanas
-            nearby.forEach((st, idx)=>{
-                const marker = L.marker([st.lat,st.lng],{icon: makePoliceIcon(idx+1)}).addTo(stationLayer)
-                    .bindPopup(`<b>${st.name}</b><br>${(st.dist/1000).toFixed(2)} km away`);
-                window.currentNearestMarkers[idx] = marker;
-            });
-
-            // fit map to include route and the nearby markers
-            const markersGroup = nearby.map(s=>L.marker([s.lat,s.lng]));
-            const routePoints = routeCoords.map(p=>L.marker([p.lat,p.lng]));
-            const group = L.featureGroup(markersGroup.concat(routePoints));
-            map.fitBounds(group.getBounds().pad(0.3));
-
-            if(window.currentNearestMarkers[0]) window.currentNearestMarkers[0].openPopup();
-            toggle.innerText = `Hide Thanas `;
-            shown = true;
-        }else{
-            // remove markers
-            window.currentNearestMarkers.forEach(m=>{ if(m) map.removeLayer(m); });
-            window.currentNearestMarkers = new Array(nearby.length).fill(null);
-            toggle.innerText = `Show Nearest Thanas 👮`;
-            shown = false;
-        }
-    };
-
-    container.appendChild(toggle);
-}
-
-function focusNearest(idx){
-    if(!window.currentNearestMarkers || !window.currentNearestMarkers[idx]) return;
-    const m = window.currentNearestMarkers[idx];
-    map.setView(m.getLatLng(), 15, {animate:true});
-    m.openPopup();
-}
-
-function focusNearest(idx){
-    if(!window.currentNearestMarkers || !window.currentNearestMarkers[idx]) return;
-    const m = window.currentNearestMarkers[idx];
-    map.setView(m.getLatLng(), 15, {animate:true});
-    m.openPopup();
 }
 
 // Programmatic alternative trigger removed
